@@ -1,10 +1,12 @@
 import './style.css'
+import { categories } from './category';
+
 
 export function modal(contentType: string) {
-    // Capitilize first letter
+    // capitilize first letter
     const capitalizedContentType = contentType.charAt(0).toUpperCase() + contentType.slice(1);
 
-    // for task and category
+    // for task and category moda
     let getModal = document.querySelector<HTMLDivElement>('#modal-container');
     // generate different modal depending on which button was clicked
     if(contentType == 'task'){
@@ -15,7 +17,7 @@ export function modal(contentType: string) {
           <h2>Create New ${capitalizedContentType}</h2>
           <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
          </div>
-         <form id="newForm">
+         <form id="${contentType}Form">
           <label for="${contentType}Name">${capitalizedContentType} Name*</label>
           <input type="text" id="${contentType}Name" name="${contentType}Name" placeholder="Clean room" required>
           <label for="${contentType}Description">${capitalizedContentType} Description:</label>
@@ -27,7 +29,6 @@ export function modal(contentType: string) {
          </form>
         </div>
         `
-        // submit contents of form to new script and append to screen
     } else if (contentType == 'category'){
         getModal!.innerHTML = 
         `
@@ -36,7 +37,7 @@ export function modal(contentType: string) {
           <h2>Create New ${capitalizedContentType}</h2>
           <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
          </div>
-         <form id="newForm">
+         <form id="${contentType}Form">
           <label for="${contentType}Name">${capitalizedContentType} Name*</label>
           <input type="text" id="${contentType}Name" name="${contentType}Name" required>
           <div class="modal${capitalizedContentType}buttons">
@@ -46,6 +47,19 @@ export function modal(contentType: string) {
          </form>
         </div>
         `
+        // event listener for form submission
+        const categoryForm = document.getElementById(`${contentType}Form`) as HTMLFormElement;
+        categoryForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            console.log('form')
+            // get entered category name
+            const categoryNameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
+
+            // creates category in category.ts
+            categories.createCategory(categoryNameInput.value);
+
+            toggleModal();
+         });
     }
     toggleModal()
     // show/hide modal
