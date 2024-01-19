@@ -12,6 +12,8 @@
   @apply cursor-pointer
 }
 
+/* -------------------- modal -------------------- */
+
 #modal-container {
   align-items: center;
   justify-content: center;
@@ -36,9 +38,8 @@
   justify-content: space-between;
 }
 
-/* Additional styles for form elements if needed */
-#newForm {
-  max-width: 400px; /* Adjust the width as needed */
+#taskForm, #categoryForm {
+  max-width: 400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -57,13 +58,29 @@ input, textarea {
 
 .modal-button {
   padding: 10px 20px;
-  background-color: #3498db; /* Button color */
-  color: #fff; /* Text color */
+  background-color: #3498db;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
 .modal-button:hover {
-  background-color: #2980b9; /* Hover state color */
+  background-color: #2980b9;
+}
+
+/* -------------------- categories list --------------------  */
+
+.myCategories {
+  padding: 5px;
+  margin: 5px 0px;
+  border: 2px solid black;
+  border-radius: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.svgButtonContainer {
+  display: flex;
+  flex-direction: row;
 }
