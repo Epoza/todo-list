@@ -34,13 +34,13 @@ export function modal(contentType: string) {
         `
         <div id="modal-content">
          <div id="modalHeader">
-          <h2>Create New ${capitalizedContentType}</h2>
+          <h2 class="large-text">Create New ${capitalizedContentType}</h2>
           <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
          </div>
          <form id="${contentType}Form">
           <label for="${contentType}Name">${capitalizedContentType} Name*</label>
           <input type="text" id="${contentType}Name" name="${contentType}Name" required>
-          <div class="modal${capitalizedContentType}buttons">
+          <div class="modal${capitalizedContentType}Buttons">
            <button class="modal-button" id="cancel">Cancel</button>
            <button class="modal-button" type="submit">Create ${capitalizedContentType}</button>
           </div>
