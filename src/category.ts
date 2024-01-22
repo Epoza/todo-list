@@ -1,4 +1,4 @@
-import './style.css'
+import './style.css';
 
 export const categories = (() => {
     let categoriesList: Category[] = [];
@@ -10,21 +10,28 @@ export const categories = (() => {
         }
     }
 
+    // Default category
+    createCategory('Other');
+
     function createCategory(name: string): void {
-        console.log('createCategory');
         const newCategory = new Category(name);
         const categoryListContainer = document.getElementById('categoryContainer');
-        // makes new HTML structure
+
+        // create new HTML structure
+        const categoryIndex = categoriesList.length;
         const categoryItem = document.createElement('div');
         categoryItem.classList.add("myCategories");
-        categoryItem.setAttribute('data-category', categoryNum.toString());
-        // displays the category name
+        categoryItem.setAttribute('data-category', categoryIndex.toString());
+
+        // display the category name
         const categoryName = document.createElement('span');
         categoryName.textContent = newCategory.name;
         categoryItem.appendChild(categoryName);
+
         // holds the svg buttons
         const svgButtonContainer = document.createElement('div');
         svgButtonContainer.classList.add('svgButtonContainer');
+
         // edit svg button
         const categoryEdit = document.createElement('div');
         categoryEdit.classList.add('svgButton');
@@ -33,25 +40,63 @@ export const categories = (() => {
         editIcon.alt = 'edit category icon';
         categoryEdit.appendChild(editIcon);
         svgButtonContainer.appendChild(categoryEdit)
+
         // remove svg button
         const categoryRemove = document.createElement('div');
         categoryRemove.classList.add('svgButton');
+        categoryRemove.setAttribute('data-remove', categoryIndex.toString());
         const removeIcon = document.createElement('img');
         removeIcon.src = "../images/remove.svg"
         removeIcon.alt = 'remove category icon';
         categoryRemove.appendChild(removeIcon);
-        svgButtonContainer.appendChild(categoryRemove)
+        svgButtonContainer.appendChild(categoryRemove);
 
         categoryItem.appendChild(svgButtonContainer);
 
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
         categoryNum++;
+        updateCategories();
     }
 
-    function removeCategory(name: string): void {
-        // work on this next
-        categoriesList = categoriesList.filter(category => category.name !== name);
+    function removeCategory(event: Event): void {
+        const target = event.target as HTMLElement;
+        const categoryRemoveButton = target.closest('.svgButton[data-remove]');
+        
+        if (categoryRemoveButton) {
+            const dataIndex = categoryRemoveButton.getAttribute('data-remove');
+
+            if (dataIndex !== null) {
+                const index = parseInt(dataIndex, 10);
+
+                // remove the corresponding element from the DOM
+                const categoryElement = document.querySelector(`.myCategories[data-category="${index}"]`);
+                categoryElement?.remove();
+
+                // remove the element from the array
+                categoriesList.splice(index, 1);
+
+                updateCategories();
+            }
+        }
+    }
+
+    // add event listener to categoryContainer for event delegation
+    const categoryContainer = document.getElementById('categoryContainer');
+    categoryContainer?.addEventListener('click', removeCategory);
+
+    function updateCategories(): void {
+        const categoryElements = document.querySelectorAll('.myCategories');
+
+        categoryElements.forEach((categoryElement, newIndex) => {
+            categoryElement.setAttribute('data-category', newIndex.toString());
+
+            // update data-remove attribute of the remove button
+            const removeButton = categoryElement.querySelector('.svgButton[data-remove]');
+            if (removeButton) {
+                removeButton.setAttribute('data-remove', newIndex.toString());
+            }
+        });
     }
 
     function editCategories(): Category[] {
@@ -61,8 +106,7 @@ export const categories = (() => {
     return {
         createCategory,
         removeCategory,
+        updateCategories,
         editCategories
     };
 })();
-
-
