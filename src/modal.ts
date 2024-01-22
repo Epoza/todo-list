@@ -47,14 +47,14 @@ export function modal(contentType: string) {
          </form>
         </div>
         `
+        
         // event listener for form submission
-        const categoryForm = document.getElementById(`${contentType}Form`) as HTMLFormElement;
-        categoryForm.addEventListener('submit', function (event) {
+        const formSubmission = document.getElementById(`${contentType}Form`) as HTMLFormElement; 
+        formSubmission.addEventListener('submit', (event) => {
             event.preventDefault();
             console.log('form')
             // get entered category name
             const categoryNameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
-
             // creates category in category.ts
             categories.createCategory(categoryNameInput.value);
 
