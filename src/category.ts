@@ -2,25 +2,26 @@ import './style.css';
 
 export const categories = (() => {
     let categoriesList: Category[] = [];
-    let categoryNum = 0;
 
     class Category {
-        constructor(public name: string) {
+        constructor(public name: string, public color: string) {
             this.name = name;
+            this.color = color;
         }
     }
 
     // Default category
-    createCategory('Other');
+    createCategory('Other', '#ec7e7e');
 
-    function createCategory(name: string): void {
-        const newCategory = new Category(name);
+    function createCategory(name: string, color: string): void {
+        const newCategory = new Category(name, color);
         const categoryListContainer = document.getElementById('categoryContainer');
-
+        console.log(color)
         // create new HTML structure
         const categoryIndex = categoriesList.length;
         const categoryItem = document.createElement('div');
         categoryItem.classList.add("myCategories");
+        categoryItem.style.backgroundColor = `${color}`
         categoryItem.setAttribute('data-category', categoryIndex.toString());
 
         // display the category name
@@ -55,8 +56,9 @@ export const categories = (() => {
 
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
-        categoryNum++;
+        console.log(categoriesList)
         updateCategories();
+        
     }
 
     function removeCategory(event: Event): void {
@@ -99,7 +101,7 @@ export const categories = (() => {
         });
     }
 
-    function editCategories(): Category[] {
+    function editCategory(): Category[] {
         return categoriesList;
     }
 
@@ -107,6 +109,6 @@ export const categories = (() => {
         createCategory,
         removeCategory,
         updateCategories,
-        editCategories
+        editCategory
     };
 })();
