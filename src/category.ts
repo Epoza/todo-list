@@ -16,7 +16,7 @@ export const categories = (() => {
     function createCategory(name: string, color: string): void {
         const newCategory = new Category(name, color);
         const categoryListContainer = document.getElementById('categoryContainer');
-        console.log(color)
+
         // create new HTML structure
         const categoryIndex = categoriesList.length;
         const categoryItem = document.createElement('div');
@@ -40,7 +40,7 @@ export const categories = (() => {
         editIcon.src = "../images/edit.svg"
         editIcon.alt = 'edit category icon';
         categoryEdit.appendChild(editIcon);
-        svgButtonContainer.appendChild(categoryEdit)
+        svgButtonContainer.appendChild(categoryEdit);
 
         // remove svg button
         const categoryRemove = document.createElement('div');
@@ -56,15 +56,17 @@ export const categories = (() => {
 
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
-        console.log(categoriesList)
+        console.log(categoriesList);
         updateCategories();
-        
+
+        // Add click event listener to the edit button
+        categoryEdit.addEventListener('click', () => editCategory(newCategory, categoryItem));
     }
 
     function removeCategory(event: Event): void {
         const target = event.target as HTMLElement;
         const categoryRemoveButton = target.closest('.svgButton[data-remove]');
-        
+
         if (categoryRemoveButton) {
             const dataIndex = categoryRemoveButton.getAttribute('data-remove');
 
@@ -83,7 +85,7 @@ export const categories = (() => {
         }
     }
 
-    // add event listener to categoryContainer for event delegation
+    // Add event listener to categoryContainer for event delegation
     const categoryContainer = document.getElementById('categoryContainer');
     categoryContainer?.addEventListener('click', removeCategory);
 
@@ -101,8 +103,21 @@ export const categories = (() => {
         });
     }
 
-    function editCategory(): Category[] {
-        return categoriesList;
+    function editCategory(category: Category, categoryItem: HTMLElement): void {
+        // display prompt for user, (change to modal later)
+        const newName = prompt('Enter the new name:', category.name);
+        const newColor = prompt('Enter the new color (hex code or color name):', category.color);
+
+        // update the category with the new information
+        if (newName !== null && newColor !== null) {
+            category.name = newName;
+            category.color = newColor;
+
+            // update the UI with the modified category information
+            const categoryName = categoryItem.querySelector('span');
+            categoryName!.textContent = newName;
+            categoryItem.style.backgroundColor = newColor;
+        }
     }
 
     return {
