@@ -48,7 +48,7 @@ export function modal(contentType: string, edit?: Category) {
                 </div>
                 <form id="${contentType}Form">
                     <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                    <input type="text" id="${contentType}Name" name="${contentType}Name" value="${edit.name}" required>
+                    <input type="text" id="${contentType}Name" name="${contentType}Name" value="${edit.name}" maxlength="30" required>
                     <label for="${contentType}Color">${capitalizedContentType} Color</label>
                     <div class="color-options">
                         ${generateColorSquares()}
@@ -70,7 +70,7 @@ export function modal(contentType: string, edit?: Category) {
                     </div>
                     <form id="${contentType}Form">
                         <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                        <input type="text" id="${contentType}Name" name="${contentType}Name" required>
+                        <input type="text" id="${contentType}Name" name="${contentType}Name" maxlength="30"  required>
                         <label for="${contentType}Color">${capitalizedContentType} Color</label>
                         <div class="color-options">
                             ${generateColorSquares()}

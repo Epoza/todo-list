@@ -117,3 +117,8 @@ button#cancel:hover {
   display: flex;
   flex-direction: row;
 }
+
+span{
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
