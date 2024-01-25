@@ -1,14 +1,15 @@
 import './style.css';
+import { modal } from './modal';
+
+export class Category {
+    constructor(public name: string, public color: string) {
+        this.name = name;
+        this.color = color;
+    }
+}
 
 export const categories = (() => {
     let categoriesList: Category[] = [];
-
-    class Category {
-        constructor(public name: string, public color: string) {
-            this.name = name;
-            this.color = color;
-        }
-    }
 
     // Default category
     createCategory('Other', '#ec7e7e');
@@ -60,7 +61,7 @@ export const categories = (() => {
         updateCategories();
 
         // Add click event listener to the edit button
-        categoryEdit.addEventListener('click', () => editCategory(newCategory, categoryItem));
+        categoryEdit.addEventListener('click', () => modal('category', newCategory));
     }
 
     function removeCategory(event: Event): void {
@@ -103,27 +104,35 @@ export const categories = (() => {
         });
     }
 
-    function editCategory(category: Category, categoryItem: HTMLElement): void {
-        // display prompt for user, (change to modal later)
-        const newName = prompt('Enter the new name:', category.name);
-        const newColor = prompt('Enter the new color (hex code or color name):', category.color);
+    function editCategory(category: Category, newCategoryName: string, newCategoryColor: string): void {
+        // find the categoryItem using the unique identifier (data-category)
+        const dataIndex = categoriesList.indexOf(category);
 
-        // update the category with the new information
-        if (newName !== null && newColor !== null) {
-            category.name = newName;
-            category.color = newColor;
+        if (newCategoryName !== null && newCategoryColor !== null && dataIndex !== -1) {
+            // update the category with the new information
+            category.name = newCategoryName;
+            category.color = newCategoryColor;
 
             // update the UI with the modified category information
-            const categoryName = categoryItem.querySelector('span');
-            categoryName!.textContent = newName;
-            categoryItem.style.backgroundColor = newColor;
+            const categoryItem = document.querySelector(`.myCategories[data-category="${dataIndex}"]`) as HTMLElement;
+            
+            if (categoryItem) {
+                const categoryName = categoryItem.querySelector('span');
+                categoryName!.textContent = newCategoryName;
+                categoryItem.style.backgroundColor = newCategoryColor;
+            }
         }
+    }
+
+    function retrieveCategoriesList(): Category[] {
+        return categoriesList;
     }
 
     return {
         createCategory,
         removeCategory,
         updateCategories,
-        editCategory
+        editCategory,
+        retrieveCategoriesList
     };
 })();

@@ -1,7 +1,7 @@
 import './style.css';
-import { categories } from './category';
+import { categories, Category } from './category';
 
-export function modal(contentType: string) {
+export function modal(contentType: string, edit?: Category) {
     const capitalizedContentType = contentType.charAt(0).toUpperCase() + contentType.slice(1);
 
     const getModal = document.querySelector<HTMLDivElement>('#modal-container');
@@ -9,13 +9,13 @@ export function modal(contentType: string) {
     const modalContent = getModalContent(contentType, capitalizedContentType);
     getModal!.innerHTML = modalContent;
 
-    // Event listener for form submission
+    // event listener for form submission
     const formSubmission = document.getElementById(`${contentType}Form`) as HTMLFormElement;
     formSubmission.addEventListener('submit', handleFormSubmission);
 
     toggleModal();
 
-    // Event listeners for cancel and close buttons
+    // event listeners for cancel and close buttons
     document.getElementById('cancel')!.addEventListener('click', handleCancel);
     document.getElementById('close')!.addEventListener('click', handleClose);
 
@@ -40,6 +40,27 @@ export function modal(contentType: string) {
                 </div>
             `;
         } else if (contentType === 'category') {
+            if(edit){ // editing a category
+                return `<div id="modal-content">
+                <div id="modalHeader">
+                    <h2 class="large-text">Edit ${capitalizedContentType}</h2>
+                    <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
+                </div>
+                <form id="${contentType}Form">
+                    <label for="${contentType}Name">${capitalizedContentType} Name*</label>
+                    <input type="text" id="${contentType}Name" name="${contentType}Name" value="${edit.name}" required>
+                    <label for="${contentType}Color">${capitalizedContentType} Color</label>
+                    <div class="color-options">
+                        ${generateColorSquares()}
+                    </div>
+                    <div class="modal${capitalizedContentType}Buttons">
+                        <button class="modal-button" id="cancel">Cancel</button>
+                        <button class="modal-button" type="submit">Save Changes</button>
+                    </div>
+                </form>
+            </div>`;
+            } else {
+                // creating a new category
             return `
                 <!-- Category modal content -->
                 <div id="modal-content">
@@ -61,6 +82,7 @@ export function modal(contentType: string) {
                     </form>
                 </div>
             `;
+            }
         }
         return '';
     }
@@ -73,7 +95,7 @@ export function modal(contentType: string) {
             <div class="color-square" style="background-color: ${color}" data-color="${color}"></div>
         `).join('');
     }
-
+    
     function handleFormSubmission(event: Event) {
         event.preventDefault();
         const categoryNameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
@@ -81,7 +103,13 @@ export function modal(contentType: string) {
 
         if (selectedColorSquare) {
             const selectedColor = selectedColorSquare.getAttribute('data-color');
-            categories.createCategory(categoryNameInput.value, selectedColor!);
+            if (edit) {
+                // editing an existing category
+                categories.editCategory(edit, categoryNameInput.value, selectedColor!);
+            } else {
+                // creating a new category
+                categories.createCategory(categoryNameInput.value, selectedColor!);
+            }
             toggleModal();
         } else {
             alert('Please select a color.');
@@ -119,3 +147,4 @@ export function modal(contentType: string) {
         });
     }
 }
+
