@@ -83,6 +83,25 @@ button#cancel:hover {
   background-color: #aeaeae;
 }
 
+.color-options {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 3px;
+}
+
+.color-square {
+  width: 100%;
+  padding-top: 100%; /* Maintain aspect ratio (square) */
+  border: 3px solid black;
+  border-radius: 17px;
+}
+
+/* Add hover effect or any other styling as needed */
+.color-square.selected {
+  opacity: 70%;
+}
+
+
 /* -------------------- categories list --------------------  */
 
 .myCategories {
