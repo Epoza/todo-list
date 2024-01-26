@@ -10,11 +10,21 @@ export class Category {
 
 export const categories = (() => {
     let categoriesList: Category[] = [];
+    
+    // easily insert default SVG's 
+    const defaultCategoryMappings = [
+        { className: 'svgAll', iconSrc: '../images/all.svg', alt: 'all category icon' },
+        { className: 'svgToday', iconSrc: '../images/today.svg', alt: 'today category icon' },
+        { className: 'svgImportant', iconSrc: '../images/important.svg', alt: 'important category icon' },
+    ];
 
-    // Default category
-    createCategory('Other', '#ec7e7e');
+    // Default categories
+    createCategory('All', '#eaeaea', true);
+    createCategory('Today', '#ffe6e2', true);
+    createCategory('Important', '#fffeea', true);
+    
 
-    function createCategory(name: string, color: string): void {
+    function createCategory(name: string, color: string, defaultCategory?: boolean): void {
         const newCategory = new Category(name, color);
         const categoryListContainer = document.getElementById('categoryContainer');
 
@@ -24,44 +34,65 @@ export const categories = (() => {
         categoryItem.classList.add("myCategories");
         categoryItem.style.backgroundColor = `${color}`
         categoryItem.setAttribute('data-category', categoryIndex.toString());
+        
+        // check for default category
+        if (defaultCategory && categoryIndex < defaultCategoryMappings.length) {
+            const { className, iconSrc, alt } = defaultCategoryMappings[categoryIndex];
+            
+            // insert the default category svg
+            categoryItem.classList.add('defaultCategory')
+            const categoryDefaultSvg = document.createElement('div');
+            categoryDefaultSvg.classList.add(className);
+            const defaultIcon = document.createElement('img');
+            defaultIcon.src = iconSrc;
+            defaultIcon.alt = alt;
+            categoryDefaultSvg.appendChild(defaultIcon);
+            categoryItem.appendChild(categoryDefaultSvg);
+        }
 
         // display the category name
         const categoryName = document.createElement('span');
         categoryName.textContent = newCategory.name;
         categoryItem.appendChild(categoryName);
 
-        // holds the svg buttons
-        const svgButtonContainer = document.createElement('div');
-        svgButtonContainer.classList.add('svgButtonContainer');
+        if(!defaultCategory){
+            // holds the svg buttons
+            const svgButtonContainer = document.createElement('div');
+            svgButtonContainer.classList.add('svgButtonContainer');
 
-        // edit svg button
-        const categoryEdit = document.createElement('div');
-        categoryEdit.classList.add('svgButton');
-        const editIcon = document.createElement('img');
-        editIcon.src = "../images/edit.svg"
-        editIcon.alt = 'edit category icon';
-        categoryEdit.appendChild(editIcon);
-        svgButtonContainer.appendChild(categoryEdit);
+            // edit svg button
+            const categoryEdit = document.createElement('div');
+            categoryEdit.classList.add('svgButton');
+            const editIcon = document.createElement('img');
+            editIcon.src = "../images/edit.svg"
+            editIcon.alt = 'edit category icon';
+            categoryEdit.appendChild(editIcon);
+            svgButtonContainer.appendChild(categoryEdit);
 
-        // remove svg button
-        const categoryRemove = document.createElement('div');
-        categoryRemove.classList.add('svgButton');
-        categoryRemove.setAttribute('data-remove', categoryIndex.toString());
-        const removeIcon = document.createElement('img');
-        removeIcon.src = "../images/remove.svg"
-        removeIcon.alt = 'remove category icon';
-        categoryRemove.appendChild(removeIcon);
-        svgButtonContainer.appendChild(categoryRemove);
+            // remove svg button
+            const categoryRemove = document.createElement('div');
+            categoryRemove.classList.add('svgButton');
+            categoryRemove.setAttribute('data-remove', categoryIndex.toString());
+            const removeIcon = document.createElement('img');
+            removeIcon.src = "../images/remove.svg"
+            removeIcon.alt = 'remove category icon';
+            categoryRemove.appendChild(removeIcon);
+            svgButtonContainer.appendChild(categoryRemove);
 
-        categoryItem.appendChild(svgButtonContainer);
+            categoryItem.appendChild(svgButtonContainer);
+
+            // Add click event listener to the edit button
+            categoryEdit.addEventListener('click', () => modal('category', newCategory));
+        }
+
+        
 
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
         console.log(categoriesList);
         updateCategories();
 
-        // Add click event listener to the edit button
-        categoryEdit.addEventListener('click', () => modal('category', newCategory));
+
     }
 
     function removeCategory(event: Event): void {
