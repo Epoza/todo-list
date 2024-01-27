@@ -109,6 +109,7 @@ button#cancel:hover {
   border-radius: 15px;
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .defaultCategory {
@@ -125,4 +126,8 @@ button#cancel:hover {
 span{
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.categorySelected {
+  box-shadow: 1.2px 2.4px 2.4px hsl(0deg 0% 0% / 0.46);
 }
