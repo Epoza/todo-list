@@ -48,6 +48,11 @@ export const categories = (() => {
             defaultIcon.alt = alt;
             categoryDefaultSvg.appendChild(defaultIcon);
             categoryItem.appendChild(categoryDefaultSvg);
+
+            // set the first category to the selected category
+            if (categoryIndex === 0) {
+                categoryItem.classList.add('categorySelected');
+            }
         }
 
         // display the category name
