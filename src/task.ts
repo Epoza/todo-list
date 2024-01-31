@@ -1,17 +1,22 @@
 import './style.css';
 import { modal } from './modal';
 
-export class Category {
-    constructor(public title: string, public description: string) {
-        this.title = title;
+export class Task {
+    constructor(public name: string, public description?: string) {
+        this.name = name;
         this.description = description;
     }
 }
 
 export const tasks = (() => {
-    let tasksList: Category[] = [];
+    let tasksList: Task[] = [];
     
-    function createTask(title: string, description: string): void {
+    function createTask(name: string, description?: string): void {
+        // get the currently selected category and append the data to it
+        const newTask = new Task(name, description);
+        tasksList.push(newTask);
+        console.log(tasksList)
+        console.log(newTask.name + ' ' + newTask.description);
     }
 
     function removeTask(event: Event): void {
