@@ -1,5 +1,6 @@
 import './style.css';
 import { categories, Category } from './category';
+import { tasks } from './task';
 
 export function modal(contentType: string, edit?: Category) {
     const capitalizedContentType = contentType.charAt(0).toUpperCase() + contentType.slice(1);
@@ -98,22 +99,31 @@ export function modal(contentType: string, edit?: Category) {
     
     function handleFormSubmission(event: Event) {
         event.preventDefault();
-        const categoryNameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
-        const selectedColorSquare = document.querySelector('.color-square.selected') as HTMLDivElement;
+        const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
+        const taskDescriptionInput = document.getElementById(`${contentType}Description`) as HTMLInputElement;
+        
 
-        if (selectedColorSquare) {
-            const selectedColor = selectedColorSquare.getAttribute('data-color');
+        if (contentType === 'category') {
+            const selectedColorSquare = document.querySelector('.color-square.selected') as HTMLDivElement;
+            if(selectedColorSquare){
+                const selectedColor = selectedColorSquare.getAttribute('data-color');
             if (edit) {
                 // editing an existing category
-                categories.editCategory(edit, categoryNameInput.value, selectedColor!);
+                categories.editCategory(edit, nameInput.value, selectedColor!);
             } else {
                 // creating a new category
-                categories.createCategory(categoryNameInput.value, selectedColor!);
+                categories.createCategory(nameInput.value, selectedColor!);
             }
             toggleModal();
-        } else {
-            alert('Please select a color.');
+            }else {
+                alert('Please select a color.');
+            }
+        } else if (contentType === 'task') {
+            // creating a new task
+            tasks.createTask(nameInput.value, taskDescriptionInput.value);
+            toggleModal();
         }
+        
     }
 
     function toggleModal() {
