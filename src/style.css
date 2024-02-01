@@ -12,6 +12,15 @@
   @apply cursor-pointer
 }
 
+/* Change svg add task button if there are tasks */
+.noTasks {
+ @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
+}
+
+.hasTasks {
+ @apply bg-cyan-950
+}
+
 /* -------------------- modal -------------------- */
 
 #modal-container {
