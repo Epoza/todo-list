@@ -140,3 +140,10 @@ span{
 .categorySelected {
   box-shadow: 1.2px 2.4px 2.4px hsl(0deg 0% 0% / 0.46);
 }
+
+/* -------------Task Styling ------------- */
+
+#taskCategoryHeader {
+  font-size: 30px;
+  font-weight: 500;
+}
