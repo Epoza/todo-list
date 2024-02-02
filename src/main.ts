@@ -16,11 +16,9 @@ document.body.addEventListener('click', (event: MouseEvent) => {
     switch (buttonId) {
       case 'category': // newCategory button clicked
         modal(buttonId)
-        console.log('Clicked newCategory button');
         break;
       case 'task': // newTask button clicked
         modal(buttonId)
-        console.log('Clicked newTask button');
         break;
     }
   }
