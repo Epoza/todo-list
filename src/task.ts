@@ -10,8 +10,8 @@ export class Task {
 
 export const tasks = (() => {
     let tasksList: Task[] = [];
-    
-    createTask('Task Name', 'Task Description');
+
+    createTask('test task')
     function createTask(name: string, description?: string): void {
         // get the currently selected category
         const selectedCategory = document.querySelector('.myCategories.categorySelected');
@@ -20,22 +20,22 @@ export const tasks = (() => {
             // extract the category index from the data-category attribute
             const categoryIndex = selectedCategory.getAttribute('data-category');
             
-            const todoHeader = document.getElementById('todoHeader');
+            // use for taskContainer placement
+            const taskInfo = document.getElementById('taskInfo');
 
             const newTask = new Task(name, description);
             const taskIndex = tasksList.length;
     
             // create or retrieve the task container for the selected category
             const taskContainerId = `taskContainer-${categoryIndex}`;
-            // Check if the task container already exists
             let taskContainer = document.getElementById(taskContainerId);
     
             if (!taskContainer) {
                 // create new task container only if it doesn't exist
                 taskContainer = document.createElement('div');
                 taskContainer.id = taskContainerId;
-                taskContainer.classList.add('taskContainer');
-                todoHeader?.appendChild(taskContainer);
+                taskContainer.classList.add('taskContainer')
+                taskInfo?.insertBefore(taskContainer, document.getElementById('task'));
                 console.log(`Created new task container for category index ${categoryIndex}`);
             } else {
                 console.log(`Using existing task container for category index ${categoryIndex}`);
@@ -46,6 +46,8 @@ export const tasks = (() => {
             taskItem.classList.add("myTask");
             taskItem.setAttribute('data-task', taskIndex.toString());
             taskItem.setAttribute('assigned-category', categoryIndex!.toString());
+
+            // Create HTML structure for description
     
             // display the task name
             const taskName = document.createElement('span');
@@ -56,36 +58,41 @@ export const tasks = (() => {
             console.log(`Task created for category index ${categoryIndex}: ${newTask.name} ${newTask.description}`);
             console.log(tasksList);
             tasksList.push(newTask);
-    
-            // Check if tasksList has entries, later check if category has a taskConatiner
-            if (tasksList.length > 0) {
-                // Find the element using its ID
-                const addSvgButton = document.getElementById('task');
-    
-                // Check if the element exists
-                if (addSvgButton) {
-                    // restyle the button
-                    addSvgButton.classList.remove("noTasks");
-                    addSvgButton.classList.add('hasTasks');
-                    addSvgButton.style.width = '24px'; // Adjust the width
-                    addSvgButton.style.height = '24px'; // Adjust the height
-                }
-            }
+            // update tasks
+            updateTasks(categoryIndex!)
             
         } else {
             console.error('No category selected for the task.');
         }
     }
-        
-    
-    
 
     function removeTask(event: Event): void {
     
     }
 
-    function updateTasks(): void {
+    function updateTasks(categoryIndex: string): void {
+        // Checks to see what tasks to show based on category selected
+        const allTaskContainers = document.querySelectorAll('.taskContainer');
 
+        allTaskContainers.forEach((container) => {
+            const isVisible = container.id === `taskContainer-${categoryIndex}`;
+            const containerElement = container as HTMLElement;
+            containerElement.style.display = isVisible ? 'block' : 'none';
+        });
+
+        // Change the add task button styling
+        let taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
+
+        const addSvgButton = document.getElementById('task');
+        if (tasksList.length > 0 && taskContainer) {
+            if (addSvgButton) {
+                addSvgButton.classList.remove("noTasks");
+                addSvgButton.classList.add('hasTasks');
+            }
+        } else {
+            addSvgButton!.classList.add("noTasks");
+            addSvgButton!.classList.remove('hasTasks');
+        }
     }
 
     function editTask(): void {
