@@ -1,5 +1,6 @@
 import './style.css'
 import { modal } from "./modal.ts";
+import { tasks } from './task.ts';
 
 const categoryContainer = document.getElementById('categoryContainer');
 
@@ -37,24 +38,21 @@ categoryContainer?.addEventListener('click', (event: MouseEvent) => {
     selectedCategory?.classList.remove('categorySelected');
     categoryElement.classList.add('categorySelected');
     selectedCategory = categoryElement;
-
     // update category header in the task section
     const categoryName = categoryElement.querySelector('span')?.textContent;
-    // Display the text on the screen
-    const todoHeader = document.getElementById('todoHeader');
+    // display the text on the screen
     let taskCategoryHeader = document.getElementById('taskCategoryHeader');
-    // Append the taskCategoryHeader element to todoHeader
-    // Set the text content of taskCategoryHeader
-    if (!taskCategoryHeader) {
-      taskCategoryHeader = document.createElement('div');
-      taskCategoryHeader.id = 'taskCategoryHeader';
-      todoHeader?.appendChild(taskCategoryHeader);
-    } 
-    taskCategoryHeader.textContent = categoryName || '';
+    // set the text content of taskCategoryHeader
+    taskCategoryHeader!.textContent = categoryName || '';
 
     // test for click
     const categoryIndex = categoryElement.getAttribute('data-category');
     console.log('Clicked category', categoryIndex);
+    if(categoryIndex){
+      // checks to see what tasks to show based on category selected
+      tasks.updateTasks(categoryIndex)
+    }
+    
   }
 });
 const selectedCategoryElement = document.querySelector('.categorySelected') as HTMLElement | null;
