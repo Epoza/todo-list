@@ -18,7 +18,7 @@
 }
 
 .hasTasks {
- @apply bg-cyan-950
+ @apply bg-cyan-950 w-6 h-6
 }
 
 /* -------------------- modal -------------------- */
@@ -146,4 +146,10 @@ span{
 #taskCategoryHeader {
   font-size: 30px;
   font-weight: 500;
+}
+
+.myTask {
+  border: 1px solid red;
+  display: flex;
+  
 }
