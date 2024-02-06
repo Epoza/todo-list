@@ -51,10 +51,11 @@ export const tasks = (() => {
             // changed to check task when user clicks
             const uncheckedTask = document.createElement('div');
             uncheckedTask.classList.add('svgButton');
-            uncheckedTask.id = 'uncheckedButton';
+            uncheckedTask.id = 'checkButton';
             const uncheckedTaskIcon = document.createElement('img');
             uncheckedTaskIcon.src = "../images/uncheckedBox.svg";
             uncheckedTaskIcon.alt = 'unchecked task icon';
+            uncheckedTaskIcon.id = 'unchecked';
             uncheckedTask.appendChild(uncheckedTaskIcon);
             taskItem.appendChild(uncheckedTask);
 
@@ -108,11 +109,69 @@ export const tasks = (() => {
             tasksList.push(newTask);
             // update tasks
             updateTasks(categoryIndex!)
-            
+            // Add event listener to handle button clicks
+            taskContainer?.addEventListener('click', handleButtonClick);
         } else {
             console.error('No category selected for the task.');
         }
     }
+
+    function handleButtonClick(event: Event) {
+        const target = event.target as HTMLElement;
+        const button = target.closest('.svgButton');
+
+        enum ButtonId {
+            checkButton = 'checkButton',
+            DescriptionButton = 'descriptionButton',
+            EditButton = 'editButton',
+            RemoveButton = 'removeButton'
+        }
+
+        if (button) {
+            const buttonId = button.id;
+
+            switch (buttonId) {
+                case ButtonId.checkButton:
+                    // toggle between unchecked and checked
+                    const checkTaskIcon = button.querySelector('img');
+                    if (checkTaskIcon) {
+                        const currentIcon = checkTaskIcon.src;
+                        const toggleIcon = currentIcon.includes('uncheckedBox.svg')
+                            ? "../images/checkedBox.svg"
+                            : "../images/uncheckedBox.svg";
+                        checkTaskIcon.src = toggleIcon;
+                        checkTaskIcon.id = checkTaskIcon.id === 'unchecked' ? 'checked' : 'unchecked';
+                        checkTaskIcon.alt = checkTaskIcon.alt === 'unchecked task icon' ? 'checked task icon' : 'unchecked task icon';
+
+                        // change styling
+                        const taskContainer = button.closest('.myTask') as HTMLElement
+                        const taskContainerText = taskContainer?.querySelector('span'); // Change to querySelectorAll when description is added
+                        if(taskContainerText){
+                            taskContainerText.style.textDecoration = checkTaskIcon.id === 'checked' ? 'line-through' : 'none';
+                            taskContainer!.style.backgroundColor = checkTaskIcon.id === 'checked'? 'rgba(0, 0, 0, 0.3)' : 'initial';
+                        }
+                    }
+                    
+                    break;
+                case ButtonId.DescriptionButton:
+                    // show drop down 
+                    console.log('Description');
+                    break;
+                case ButtonId.EditButton:
+                    // go to editTask
+                    console.log('Edit');
+                    break;
+                case ButtonId.RemoveButton:
+                    // go to removeTask
+                    console.log('Remove');
+                    break;
+                // Add more cases for additional buttons
+                default:
+                    break;
+            }
+        }
+    }
+    
 
     function removeTask(): void {
     
@@ -149,6 +208,7 @@ export const tasks = (() => {
 
     return {
         createTask,
+        handleButtonClick,
         removeTask,
         updateTasks,
         editTask,
