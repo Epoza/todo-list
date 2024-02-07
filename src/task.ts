@@ -11,7 +11,7 @@ export class Task {
 export const tasks = (() => {
     let tasksList: Task[] = [];
 
-    createTask('test task')
+    createTask('test task', 'my description')
     function createTask(name: string, description?: string): void {
         // get the currently selected category
         const selectedCategory = document.querySelector('.myCategories.categorySelected');
@@ -47,6 +47,9 @@ export const tasks = (() => {
             taskItem.setAttribute('data-task', taskIndex.toString());
             taskItem.setAttribute('assigned-category', categoryIndex!.toString());
 
+            const taskContent = document.createElement('div');
+            taskContent.id = 'taskContent'
+
             // html structure for checkbox
             // changed to check task when user clicks
             const uncheckedTask = document.createElement('div');
@@ -57,7 +60,7 @@ export const tasks = (() => {
             uncheckedTaskIcon.alt = 'unchecked task icon';
             uncheckedTaskIcon.id = 'unchecked';
             uncheckedTask.appendChild(uncheckedTaskIcon);
-            taskItem.appendChild(uncheckedTask);
+            taskContent.appendChild(uncheckedTask);
 
             // button svg holder
             const taskSvgButtonContainer = document.createElement('div');
@@ -98,15 +101,29 @@ export const tasks = (() => {
             // display the task name
             const taskName = document.createElement('span');
             taskName.textContent = newTask.name;
-            taskItem.appendChild(taskName);
+            taskContent.appendChild(taskName);
 
             // append button container to task
-            taskItem.appendChild(taskSvgButtonContainer);
-    
-            taskContainer.appendChild(taskItem);
+            taskContent.appendChild(taskSvgButtonContainer);
+
+            taskItem.appendChild(taskContent);
+
+            // description dropdown & text
+            const descriptionDropdown = document.createElement('div');
+            descriptionDropdown.classList.add('descriptionDropdown');
+            descriptionDropdown.style.display = 'none'; // Initially hide the dropdown
+
+            const descriptionContent = document.createElement('span');
+            descriptionContent.textContent = description || 'No description available';
+            descriptionDropdown.appendChild(descriptionContent);
+            taskItem.appendChild(descriptionDropdown);
+
             console.log(`Task created for category index ${categoryIndex}: ${newTask.name} ${newTask.description}`);
             console.log(tasksList);
             tasksList.push(newTask);
+
+            // append
+            taskContainer.appendChild(taskItem);
             // update tasks
             updateTasks(categoryIndex!)
             // Add event listener to handle button clicks
@@ -145,16 +162,25 @@ export const tasks = (() => {
 
                         // change styling
                         const taskContainer = button.closest('.myTask') as HTMLElement
-                        const taskContainerText = taskContainer?.querySelector('span'); // Change to querySelectorAll when description is added
+                        const taskContainerText = taskContainer?.querySelectorAll('span'); // Change to querySelectorAll when description is added
                         if(taskContainerText){
-                            taskContainerText.style.textDecoration = checkTaskIcon.id === 'checked' ? 'line-through' : 'none';
+                            taskContainerText.forEach(spanElement => {
+                                spanElement.style.textDecoration = checkTaskIcon.id === 'checked' ? 'line-through' : 'none';
+                            });
+                            
                             taskContainer!.style.backgroundColor = checkTaskIcon.id === 'checked'? 'rgba(0, 0, 0, 0.3)' : 'initial';
                         }
                     }
                     
                     break;
                 case ButtonId.DescriptionButton:
-                    // show drop down 
+                    // Toggle the display of the description dropdown
+                    const taskContainer = button.closest('.myTask') as HTMLElement;
+                    const descriptionDropdown = taskContainer.querySelector('.descriptionDropdown') as HTMLElement;
+                    console.log(descriptionDropdown)
+                    if (descriptionDropdown) {
+                        descriptionDropdown.style.display = descriptionDropdown.style.display === 'none' ? 'block' : 'none';
+                    }
                     console.log('Description');
                     break;
                 case ButtonId.EditButton:
