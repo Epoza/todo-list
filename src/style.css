@@ -148,8 +148,16 @@ span{
   font-weight: 500;
 }
 
-.myTask {
+#taskContent {
   border: 1px solid red;
   display: flex;
   
+}
+
+.taskContainer {
+  border: 1px solid black;
+}
+
+img#checked {
+  /*  change button to checked and cross out task name and make opacity lighter*/
 }
