@@ -120,7 +120,9 @@ export function modal(contentType: string, edit?: Category) {
             }
         } else if (contentType === 'task') {
             // creating a new task
-            tasks.createTask(nameInput.value, taskDescriptionInput.value);
+            const selectedCategory = document.querySelector('.myCategories.categorySelected');
+            const categoryIndex = selectedCategory!.getAttribute('data-category');
+            tasks.createTask(nameInput.value, categoryIndex!, taskDescriptionInput.value);
             toggleModal();
         }
         

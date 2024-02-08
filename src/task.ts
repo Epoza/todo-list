@@ -10,128 +10,119 @@ export class Task {
 
 export const tasks = (() => {
     let tasksList: Task[] = [];
-    function createTask(name: string, description?: string): void {
-        // get the currently selected category
-        const selectedCategory = document.querySelector('.myCategories.categorySelected');
-    
-        if (selectedCategory) {
-            // extract the category index from the data-category attribute
-            const categoryIndex = selectedCategory.getAttribute('data-category');
-            
-            // use for taskContainer placement
-            const taskInfo = document.getElementById('taskInfo');
 
-            const newTask = new Task(name, categoryIndex!, description);
-            const taskIndex = tasksList.length;
-    
-            // create or retrieve the task container for the selected category
-            const taskContainerId = `taskContainer-${categoryIndex}`;
-            let taskContainer = document.getElementById(taskContainerId);
-    
-            if (!taskContainer) {
-                // create new task container only if it doesn't exist
-                taskContainer = document.createElement('div');
-                taskContainer.id = taskContainerId;
-                taskContainer.classList.add('taskContainer')
-                taskInfo?.insertBefore(taskContainer, document.getElementById('task'));
-    
-                // Add event listener only when creating a new task container
-                taskContainer.addEventListener('click', (event) => {
-                    handleButtonClick(event);
-                    requestAnimationFrame(() => {
-                        updateTasks(categoryIndex!);
-                    });
+    createTask('First', '0', 'Hello There')
+    function createTask(name: string, categoryIndex: string, description?: string): void {
+        // use for taskContainer placement
+        const taskInfo = document.getElementById('taskInfo');
+
+        const newTask = new Task(name, categoryIndex!, description);
+        const taskIndex = tasksList.length;
+
+        // create or retrieve the task container for the selected category
+        const taskContainerId = `taskContainer-${categoryIndex}`;
+        let taskContainer = document.getElementById(taskContainerId);
+
+        if (!taskContainer) {
+            // create new task container only if it doesn't exist
+            taskContainer = document.createElement('div');
+            taskContainer.id = taskContainerId;
+            taskContainer.classList.add('taskContainer')
+            taskInfo?.insertBefore(taskContainer, document.getElementById('task'));
+
+            // Add event listener only when creating a new task container
+            taskContainer.addEventListener('click', (event) => {
+                handleButtonClick(event);
+                requestAnimationFrame(() => {
+                    updateTasks(categoryIndex!);
                 });
-            } else {
-                console.log(`Using existing task container for category index ${categoryIndex}`);
-            }
-    
-            // create new HTML structure for the task
-            const taskItem = document.createElement('div');
-            taskItem.classList.add("myTask");
-            taskItem.setAttribute('data-task', taskIndex.toString());
-            taskItem.setAttribute('assigned-category', categoryIndex!.toString());
-
-            const taskContent = document.createElement('div');
-            taskContent.id = 'taskContent'
-
-            // html structure for checkbox
-            // changed to check task when user clicks
-            const uncheckedTask = document.createElement('div');
-            uncheckedTask.classList.add('svgButton');
-            uncheckedTask.id = 'checkButton';
-            const uncheckedTaskIcon = document.createElement('img');
-            uncheckedTaskIcon.src = "../images/uncheckedBox.svg";
-            uncheckedTaskIcon.alt = 'unchecked task icon';
-            uncheckedTaskIcon.id = 'unchecked';
-            uncheckedTask.appendChild(uncheckedTaskIcon);
-            taskContent.appendChild(uncheckedTask);
-
-            // button svg holder
-            const taskSvgButtonContainer = document.createElement('div');
-            taskSvgButtonContainer.classList.add('svgButtonContainer');
-
-            // Create HTML structure for description
-            const descriptionButton = document.createElement('div');
-            descriptionButton.classList.add('svgButton');
-            descriptionButton.id = 'descriptionButton';
-            const descriptionIcon = document.createElement('img');
-            descriptionIcon.src = "../images/description.svg";
-            descriptionIcon.alt = 'description dropdown icon';
-            descriptionButton.appendChild(descriptionIcon);
-            taskSvgButtonContainer.appendChild(descriptionButton)
-
-            // HTML structure for edit and delete
-            const taskEdit = document.createElement('div');
-            taskEdit.classList.add('svgButton');
-            taskEdit.id = 'editButton';
-            const taskEditIcon = document.createElement('img');
-            taskEditIcon.src = "../images/edit.svg";
-            taskEditIcon.alt = 'edit task icon';
-            taskEdit.appendChild(taskEditIcon);
-            taskSvgButtonContainer.appendChild(taskEdit);
-
-            // delete button
-            const taskRemove = document.createElement('div');
-            taskRemove.classList.add('svgButton');
-            taskRemove.id = 'removeButton';
-            // possibly change to just data-remove
-            taskRemove.setAttribute('data-remove-task', taskIndex.toString());
-            const taskRemoveIcon = document.createElement('img');
-            taskRemoveIcon.src = "../images/remove.svg";
-            taskRemoveIcon.alt = 'unchecked task icon';
-            taskRemove.appendChild(taskRemoveIcon);
-            taskSvgButtonContainer.appendChild(taskRemove);
-    
-            // display the task name
-            const taskName = document.createElement('span');
-            taskName.textContent = newTask.name;
-            taskContent.appendChild(taskName);
-
-            // append button container to task
-            taskContent.appendChild(taskSvgButtonContainer);
-
-            taskItem.appendChild(taskContent);
-
-            // description dropdown & text
-            const descriptionDropdown = document.createElement('div');
-            descriptionDropdown.classList.add('descriptionDropdown');
-            descriptionDropdown.style.display = 'none'; // Initially hide the dropdown
-
-            const descriptionContent = document.createElement('span');
-            descriptionContent.textContent = description || 'No description available';
-            descriptionDropdown.appendChild(descriptionContent);
-            taskItem.appendChild(descriptionDropdown);
-            tasksList.push(newTask);
-
-            // append
-            taskContainer.appendChild(taskItem);
-            // update tasks
-            updateTasks(categoryIndex!)
-
+            });
         } else {
-            console.error('No category selected for the task.');
+            console.log(`Using existing task container for category index ${categoryIndex}`);
         }
+
+        // create new HTML structure for the task
+        const taskItem = document.createElement('div');
+        taskItem.classList.add("myTask");
+        taskItem.setAttribute('data-task', taskIndex.toString());
+        taskItem.setAttribute('assigned-category', categoryIndex!.toString());
+
+        const taskContent = document.createElement('div');
+        taskContent.id = 'taskContent'
+
+        // html structure for checkbox
+        // changed to check task when user clicks
+        const uncheckedTask = document.createElement('div');
+        uncheckedTask.classList.add('svgButton');
+        uncheckedTask.id = 'checkButton';
+        const uncheckedTaskIcon = document.createElement('img');
+        uncheckedTaskIcon.src = "../images/uncheckedBox.svg";
+        uncheckedTaskIcon.alt = 'unchecked task icon';
+        uncheckedTaskIcon.id = 'unchecked';
+        uncheckedTask.appendChild(uncheckedTaskIcon);
+        taskContent.appendChild(uncheckedTask);
+
+        // button svg holder
+        const taskSvgButtonContainer = document.createElement('div');
+        taskSvgButtonContainer.classList.add('svgButtonContainer');
+
+        // Create HTML structure for description
+        const descriptionButton = document.createElement('div');
+        descriptionButton.classList.add('svgButton');
+        descriptionButton.id = 'descriptionButton';
+        const descriptionIcon = document.createElement('img');
+        descriptionIcon.src = "../images/description.svg";
+        descriptionIcon.alt = 'description dropdown icon';
+        descriptionButton.appendChild(descriptionIcon);
+        taskSvgButtonContainer.appendChild(descriptionButton)
+
+        // HTML structure for edit and delete
+        const taskEdit = document.createElement('div');
+        taskEdit.classList.add('svgButton');
+        taskEdit.id = 'editButton';
+        const taskEditIcon = document.createElement('img');
+        taskEditIcon.src = "../images/edit.svg";
+        taskEditIcon.alt = 'edit task icon';
+        taskEdit.appendChild(taskEditIcon);
+        taskSvgButtonContainer.appendChild(taskEdit);
+
+        // delete button
+        const taskRemove = document.createElement('div');
+        taskRemove.classList.add('svgButton');
+        taskRemove.id = 'removeButton';
+        // possibly change to just data-remove
+        taskRemove.setAttribute('data-remove-task', taskIndex.toString());
+        const taskRemoveIcon = document.createElement('img');
+        taskRemoveIcon.src = "../images/remove.svg";
+        taskRemoveIcon.alt = 'unchecked task icon';
+        taskRemove.appendChild(taskRemoveIcon);
+        taskSvgButtonContainer.appendChild(taskRemove);
+
+        // display the task name
+        const taskName = document.createElement('span');
+        taskName.textContent = newTask.name;
+        taskContent.appendChild(taskName);
+
+        // append button container to task
+        taskContent.appendChild(taskSvgButtonContainer);
+
+        taskItem.appendChild(taskContent);
+
+        // description dropdown & text
+        const descriptionDropdown = document.createElement('div');
+        descriptionDropdown.classList.add('descriptionDropdown');
+        descriptionDropdown.style.display = 'none'; // Initially hide the dropdown
+
+        const descriptionContent = document.createElement('span');
+        descriptionContent.textContent = description || 'No description available';
+        descriptionDropdown.appendChild(descriptionContent);
+        taskItem.appendChild(descriptionDropdown);
+        tasksList.push(newTask);
+
+        // append
+        taskContainer.appendChild(taskItem);
+        // update tasks
+        updateTasks(categoryIndex!)
     }
 
     function removeAllTasks(categoryIndex: string) {
