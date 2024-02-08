@@ -1,5 +1,6 @@
 import './style.css';
 import { modal } from './modal';
+import { tasks } from './task';
 
 export class Category {
     constructor(public name: string, public color: string) {
@@ -22,6 +23,7 @@ export const categories = (() => {
     createCategory('All', '#eaeaea', true);
     createCategory('Today', '#ffe6e2', true);
     createCategory('Important', '#fffeea', true);
+    createCategory('Test', 'white', false)
     
 
     function createCategory(name: string, color: string, defaultCategory?: boolean): void {
@@ -82,6 +84,12 @@ export const categories = (() => {
             removeIcon.src = "../images/remove.svg"
             removeIcon.alt = 'remove category icon';
             categoryRemove.appendChild(removeIcon);
+            // Add click event listener directly to categoryRemove
+            categoryRemove.addEventListener('click', (event) => {
+                // Prevent the click event from propagating to the parent elements
+                event.stopPropagation();
+                removeCategory(event);
+            });
             svgButtonContainer.appendChild(categoryRemove);
 
             categoryItem.appendChild(svgButtonContainer);
@@ -89,26 +97,24 @@ export const categories = (() => {
             // Add click event listener to the edit button
             categoryEdit.addEventListener('click', () => modal('category', newCategory));
         }
-
-        
-
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
         console.log(categoriesList);
         updateCategories();
-
-
     }
 
     function removeCategory(event: Event): void {
+        console.log('remove category')
         const target = event.target as HTMLElement;
         const categoryRemoveButton = target.closest('.svgButton[data-remove]');
+        //const allCategory = document.querySelector(`[data-category="0"]`);
 
         if (categoryRemoveButton) {
             const dataIndex = categoryRemoveButton.getAttribute('data-remove');
 
             if (dataIndex !== null) {
                 const index = parseInt(dataIndex, 10);
+                console.log(index)
 
                 // remove the corresponding element from the DOM
                 const categoryElement = document.querySelector(`.myCategories[data-category="${index}"]`);
@@ -116,15 +122,21 @@ export const categories = (() => {
 
                 // remove the element from the array
                 categoriesList.splice(index, 1);
+                //set the all category to the selected category
+                //allCategory?.classList.add("categorySelected")
+
+                // if category has tasks remove them
+                document.addEventListener('DOMContentLoaded', () => {
+                    // Your code to wait for the site to load
+                    tasks.removeAllTasks(dataIndex);
+                });
+
 
                 updateCategories();
             }
         }
     }
 
-    // Add event listener to categoryContainer for event delegation
-    const categoryContainer = document.getElementById('categoryContainer');
-    categoryContainer?.addEventListener('click', removeCategory);
 
     function updateCategories(): void {
         const categoryElements = document.querySelectorAll('.myCategories');
