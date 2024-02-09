@@ -13,6 +13,9 @@ export const tasks = (() => {
 
     createTask('First', '0', 'Hello There')
     createTask('Second', '3', 'Hello Thre')
+    createTask('Third, fourthcat', '4', 'four')
+    createTask('Four, fifthcat', '5', 'five')
+    createTask('Fifth, fifthcat', '5', 'fivess')
     function createTask(name: string, categoryIndex: string, description?: string): void {
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
@@ -33,9 +36,13 @@ export const tasks = (() => {
 
             // Add event listener only when creating a new task container
             taskContainer.addEventListener('click', (event) => {
+                const clickedTaskContainer = event.currentTarget as HTMLElement;
+                const updatedCategoryIndex = clickedTaskContainer.id.split('-')[1];
                 handleButtonClick(event);
+            
+                // Pass the updated categoryIndex to updateTasks
                 requestAnimationFrame(() => {
-                    updateTasks(categoryIndex!);
+                    updateTasks(updatedCategoryIndex);
                 });
             });
         } else {
@@ -126,7 +133,7 @@ export const tasks = (() => {
         updateTasks(categoryIndex!)
     }
 
-    function removeAllTasks(categoryIndex: string) {
+    function removeAllTasks(categoryIndex: string, categoryRemoved: boolean) {
         // Remove all tasks in the specified category
         const tasksToRemove = tasksList.filter(task => task.categoryIndex === categoryIndex);
         tasksToRemove.forEach(taskToRemove => {
@@ -136,25 +143,44 @@ export const tasks = (() => {
             const taskElement = document.querySelector(`.myTask[data-task="${taskToRemoveIndex}"`);
             taskElement?.remove();
 
-            // updates data values when removing items
-            const taskElements = document.querySelectorAll('.myTask');
-            taskElements.forEach((element, newIndex) => {
-                element.setAttribute('data-task', newIndex.toString());
-
-                // update data-remove attribute of the remove button
-                const removeButton = element.querySelector('.svgButton[data-remove-task]');
-                if (removeButton) {
-                    removeButton.setAttribute('data-remove-task', newIndex.toString());
-                }
-            });
+            
 
             console.log(`Removed task with index ${taskToRemoveIndex}`);
             console.log(tasksList);
         });
 
-        // Remove the task containers associated with the category
-        const taskContainers = document.querySelectorAll(`.taskContainer[data-category="${categoryIndex}"]`);
-        taskContainers.forEach(container => container.remove());
+        // Update category index for tasks with index greater than the removed category
+        if(categoryRemoved == true){
+            tasksList.forEach(task => {
+                if (parseInt(task.categoryIndex, 10) > parseInt(categoryIndex, 10)) {
+                    task.categoryIndex = (parseInt(task.categoryIndex, 10) - 1).toString();
+                }
+            });
+            // Shift down taskContainer elements with IDs greater than categoryIndex
+            const allTaskContainers = document.querySelectorAll('.taskContainer');
+            allTaskContainers.forEach(container => {
+                const containerIndex = parseInt(container.id.split('-')[1], 10);
+                if (containerIndex > parseInt(categoryIndex, 10)) {
+                    // Shift down the container by updating its ID
+                    const newContainerIndex = containerIndex - 1;
+                    container.id = `taskContainer-${newContainerIndex}`;
+
+                    // Update assigned-category attribute of the tasks within the container
+                    const tasksInContainer = container.querySelectorAll('.myTask');
+                    tasksInContainer.forEach(taskElement => {
+                        taskElement.setAttribute('assigned-category', newContainerIndex.toString());
+                    });
+                }
+            });
+            // Remove the task container associated with the category
+            const taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
+            taskContainer?.remove()
+            
+
+        }
+        
+
+        
     }
 
     function handleButtonClick(event: Event) {
@@ -220,11 +246,9 @@ export const tasks = (() => {
     }
 
     function removeTask(event: Event): void {
-        console.log('removetask')
+        console.log('remove task')
         const target = event.target as HTMLElement;
-        console.log(target)
         const taskRemoveButton = target.closest('.svgButton[data-remove-task]');
-        console.log(taskRemoveButton)
     
         if (taskRemoveButton) {
             const dataIndex = taskRemoveButton.getAttribute('data-remove-task');
@@ -259,7 +283,7 @@ export const tasks = (() => {
     
 
     function updateTasks(categoryIndex: string): void {
-        console.log(categoryIndex)
+        console.log('update tasks category index' + categoryIndex)
         // Checks to see what tasks to show based on category selected
         const allTaskContainers = document.querySelectorAll('.taskContainer');
         
@@ -271,7 +295,6 @@ export const tasks = (() => {
             // remove empty taskContainer
             if (!containerElement.hasChildNodes()) {
                 containerElement.remove();
-                console.log(`Removed empty task container ${containerElement.id}`);
             }
         });
 
@@ -288,13 +311,6 @@ export const tasks = (() => {
             addSvgButton!.classList.add("noTasks");
             addSvgButton!.classList.remove('hasTasks');
         }
-
-        // Remove the task container associated with the category
-        //I dont think this works
-        const taskContainers = document.querySelectorAll(`.taskContainer[data-category="${categoryIndex}"]`);
-        taskContainers.forEach(container => container.remove());
-        console.log(tasksList)
-
     }
 
     function editTask(): void {
