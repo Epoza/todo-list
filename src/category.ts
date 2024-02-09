@@ -111,8 +111,11 @@ export const categories = (() => {
 
         if (categoryRemoveButton) {
             const dataIndex = categoryRemoveButton.getAttribute('data-remove');
+            
 
             if (dataIndex !== null) {
+                console.log('removeAllTasks category function')
+                tasks.removeAllTasks(dataIndex);
                 const index = parseInt(dataIndex, 10);
                 console.log(index)
 
@@ -126,12 +129,9 @@ export const categories = (() => {
                 //allCategory?.classList.add("categorySelected")
 
                 // if category has tasks remove them
-                document.addEventListener('DOMContentLoaded', () => {
-                    // Your code to wait for the site to load
-                    tasks.removeAllTasks(dataIndex);
-                });
 
 
+                console.log(categoriesList);
                 updateCategories();
             }
         }
