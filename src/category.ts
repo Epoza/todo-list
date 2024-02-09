@@ -24,6 +24,8 @@ export const categories = (() => {
     createCategory('Today', '#ffe6e2', true);
     createCategory('Important', '#fffeea', true);
     createCategory('Test', 'white', false)
+    createCategory('Four', 'white', false)
+    createCategory('Five', 'white', false)
     
 
     function createCategory(name: string, color: string, defaultCategory?: boolean): void {
@@ -99,12 +101,10 @@ export const categories = (() => {
         }
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
-        console.log(categoriesList);
         updateCategories();
     }
 
     function removeCategory(event: Event): void {
-        console.log('remove category')
         const target = event.target as HTMLElement;
         const categoryRemoveButton = target.closest('.svgButton[data-remove]');
         //const allCategory = document.querySelector(`[data-category="0"]`);
@@ -114,10 +114,10 @@ export const categories = (() => {
             
 
             if (dataIndex !== null) {
-                console.log('removeAllTasks category function')
-                tasks.removeAllTasks(dataIndex);
+                // remove all tasks associated with the category
+                tasks.removeAllTasks(dataIndex, true);
                 const index = parseInt(dataIndex, 10);
-                console.log(index)
+                console.log('removed category index' + index)
 
                 // remove the corresponding element from the DOM
                 const categoryElement = document.querySelector(`.myCategories[data-category="${index}"]`);
@@ -125,13 +125,7 @@ export const categories = (() => {
 
                 // remove the element from the array
                 categoriesList.splice(index, 1);
-                //set the all category to the selected category
-                //allCategory?.classList.add("categorySelected")
 
-                // if category has tasks remove them
-
-
-                console.log(categoriesList);
                 updateCategories();
             }
         }
