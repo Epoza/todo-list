@@ -12,6 +12,7 @@ export const tasks = (() => {
     let tasksList: Task[] = [];
 
     createTask('First', '0', 'Hello There')
+    createTask('Second', '3', 'Hello Thre')
     function createTask(name: string, categoryIndex: string, description?: string): void {
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
@@ -292,6 +293,7 @@ export const tasks = (() => {
         //I dont think this works
         const taskContainers = document.querySelectorAll(`.taskContainer[data-category="${categoryIndex}"]`);
         taskContainers.forEach(container => container.remove());
+        console.log(tasksList)
 
     }
 
