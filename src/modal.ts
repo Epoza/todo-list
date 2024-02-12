@@ -2,161 +2,136 @@ import './style.css';
 import { categories, Category } from './category';
 import { tasks } from './task';
 
-export function modal(contentType: string, edit?: Category) {
-    const capitalizedContentType = contentType.charAt(0).toUpperCase() + contentType.slice(1);
+export const modal = (() => {
+    function category(action: string, categoryClass?: Category) {
+        const contentType = 'category';
+        const capitalizedContentType = 'Category';
 
-    const getModal = document.querySelector<HTMLDivElement>('#modal-container');
+        const getModal = document.querySelector<HTMLDivElement>('#modal-container');
+        getModal?.classList.remove("hidden")
+        const modalContent = getModalContent(action);
+        getModal!.innerHTML = modalContent
 
-    const modalContent = getModalContent(contentType, capitalizedContentType);
-    getModal!.innerHTML = modalContent;
+        // event listener for form submission
+        const formSubmission = document.getElementById(`categoryForm`) as HTMLFormElement;
+        formSubmission.addEventListener('submit', handleFormSubmission);
 
-    // event listener for form submission
-    const formSubmission = document.getElementById(`${contentType}Form`) as HTMLFormElement;
-    formSubmission.addEventListener('submit', handleFormSubmission);
+        toggleModal();
 
-    toggleModal();
+        // event listeners for cancel and close buttons
+        document.getElementById('cancel')!.addEventListener('click', handleCancel);
+        document.getElementById('close')!.addEventListener('click', handleClose);
 
-    // event listeners for cancel and close buttons
-    document.getElementById('cancel')!.addEventListener('click', handleCancel);
-    document.getElementById('close')!.addEventListener('click', handleClose);
+        function getModalContent(action: string): string {
+            switch (action) {
+                case 'add':
+                    return generateCategoryForm('Create New', 'Create', '');
+                case 'edit':
+                    // Handle 'edit' action
+                    return "edit not added yet";
+                case 'remove':
+                    // Handle 'remove' action
+                    return "remove not added yet";
+                default:
+                    throw new Error(`Error: '${action}' is not a listed action`);
+            }
+        }
 
-    function getModalContent(contentType: string, capitalizedContentType: string): string {
-        if (contentType === 'task') {
+        function generateCategoryForm(headerText: string, buttonText: string, defaultValue: string): string {
             return `
-                <div id="modal-content">
-                 <div id="modalHeader">
-                 <h2>Create New ${capitalizedContentType}</h2>
-                 <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
-                 </div>
-                 <form id="${contentType}Form">
-                  <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                  <input type="text" id="${contentType}Name" name="${contentType}Name" placeholder="Clean room" required>
-                  <label for="${contentType}Description">${capitalizedContentType} Description:</label>
-                  <textarea id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional"></textarea>
-                  <div class="modal${capitalizedContentType}Buttons">
-                   <button class="modal-button" id="cancel">Cancel</button>
-                   <button class="modal-button" type="submit">Create ${capitalizedContentType}</button>
-                  </div>
-                 </form>
-                </div>
-            `;
-        } else if (contentType === 'category') {
-            if(edit){ // editing a category
-                return `<div id="modal-content">
-                <div id="modalHeader">
-                    <h2 class="large-text">Edit ${capitalizedContentType}</h2>
-                    <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
-                </div>
-                <form id="${contentType}Form">
-                    <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                    <input type="text" id="${contentType}Name" name="${contentType}Name" value="${edit.name}" maxlength="30" required>
-                    <label for="${contentType}Color">${capitalizedContentType} Color</label>
-                    <div class="color-options">
-                        ${generateColorSquares()}
-                    </div>
-                    <div class="modal${capitalizedContentType}Buttons">
-                        <button class="modal-button" id="cancel">Cancel</button>
-                        <button class="modal-button" type="submit">Save Changes</button>
-                    </div>
-                </form>
-            </div>`;
-            } else {
-                // creating a new category
-            return `
-                <!-- Category modal content -->
                 <div id="modal-content">
                     <div id="modalHeader">
-                        <h2 class="large-text">Create New ${capitalizedContentType}</h2>
+                        <h2 class="large-text">${headerText} ${capitalizedContentType}</h2>
                         <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
                     </div>
                     <form id="${contentType}Form">
                         <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                        <input type="text" id="${contentType}Name" name="${contentType}Name" maxlength="30"  required>
+                        <input type="text" id="${contentType}Name" name="${contentType}Name" value="${defaultValue}" maxlength="30" required>
                         <label for="${contentType}Color">${capitalizedContentType} Color</label>
                         <div class="color-options">
                             ${generateColorSquares()}
                         </div>
                         <div class="modal${capitalizedContentType}Buttons">
                             <button class="modal-button" id="cancel">Cancel</button>
-                            <button class="modal-button" type="submit">Create ${capitalizedContentType}</button>
+                            <button class="modal-button" type="submit">${buttonText} ${capitalizedContentType}</button>
                         </div>
                     </form>
                 </div>
             `;
-            }
         }
-        return '';
-    }
 
-    function generateColorSquares(): string {
-        // uses an array of colors to set each square to their specified color
-        const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
-
-        return colors.map(color => `
-            <div class="color-square" style="background-color: ${color}" data-color="${color}"></div>
-        `).join('');
-    }
+        function generateColorSquares(): string {
+            // uses an array of colors to set each square to their specified color
+            const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
     
-    function handleFormSubmission(event: Event) {
-        event.preventDefault();
-        const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
-        const taskDescriptionInput = document.getElementById(`${contentType}Description`) as HTMLInputElement;
-        
+            return colors.map(color => `
+                <div class="color-square" style="background-color: ${color}" data-color="${color}"></div>
+            `).join('');
+        }
 
-        if (contentType === 'category') {
+        // ... (existing event handler functions)
+
+        function handleFormSubmission(event: Event) {
+            event.preventDefault();
+            const nameInput = document.getElementById(`categoryName`) as HTMLInputElement;
+            
             const selectedColorSquare = document.querySelector('.color-square.selected') as HTMLDivElement;
             if(selectedColorSquare){
                 const selectedColor = selectedColorSquare.getAttribute('data-color');
-            if (edit) {
-                // editing an existing category
-                categories.editCategory(edit, nameInput.value, selectedColor!);
-            } else {
-                // creating a new category
+                // create new category
                 categories.createCategory(nameInput.value, selectedColor!);
-            }
-            toggleModal();
+                toggleModal();
             }else {
                 alert('Please select a color.');
             }
-        } else if (contentType === 'task') {
-            // creating a new task
-            const selectedCategory = document.querySelector('.myCategories.categorySelected');
-            const categoryIndex = selectedCategory!.getAttribute('data-category');
-            tasks.createTask(nameInput.value, categoryIndex!, taskDescriptionInput.value);
+        }
+
+        function addColorSquareListeners() {
+            const colorSquares = document.querySelectorAll('.color-square');
+    
+            colorSquares.forEach(square => {
+                square.addEventListener('click', () => {
+                    colorSquares.forEach(s => s.classList.remove('selected'));
+                    square.classList.add('selected');
+                });
+            });
+        }
+
+        // Add other modal methods (removeCategory, removeTask, etc.)
+        function handleCancel(event: Event) {
+            event.preventDefault();
+            toggleModal();
+        }
+
+        function handleClose(event: Event) {
+            event.preventDefault();
             toggleModal();
         }
         
-    }
-
-    function toggleModal() {
-        const modalContainer = document.getElementById('modal-container');
-        if (modalContainer?.style.display === 'flex') {
-            modalContainer.style.display = 'none';
-        } else {
-            modalContainer!.style.display = 'flex';
-            addColorSquareListeners();
+        function toggleModal() {
+            const modalContainer = document.getElementById('modal-container');
+            if (modalContainer?.style.display === 'flex') {
+                modalContainer.style.display = 'none';
+            } else {
+                modalContainer!.style.display = 'flex';
+                addColorSquareListeners();
+            }
         }
+
     }
 
-    function handleCancel(event: Event) {
-        event.preventDefault();
-        toggleModal();
+    function addTask() {
+        // Similar structure to addCategory, but for 'task'
     }
 
-    function handleClose(event: Event) {
-        event.preventDefault();
-        toggleModal();
+    function editCategory(category: Category) {
+        // Similar structure to addCategory, but with 'edit' action and category parameter
     }
 
-    function addColorSquareListeners() {
-        const colorSquares = document.querySelectorAll('.color-square');
-
-        colorSquares.forEach(square => {
-            square.addEventListener('click', () => {
-                colorSquares.forEach(s => s.classList.remove('selected'));
-                square.classList.add('selected');
-            });
-        });
-    }
-}
-
+    return {
+        category,
+        addTask,
+        editCategory,
+        // Add other modal methods here
+    };
+})();
