@@ -7,6 +7,11 @@ export const modal = (() => {
         const contentType = 'category';
         const capitalizedContentType = 'Category';
 
+        // get the category name and color if available
+        let currentCategoryClass: Category | undefined = categoryClass;
+        const categoryName = currentCategoryClass?.name ?? '';
+        const categoryColor = currentCategoryClass?.color ?? ''
+
         const getModal = document.querySelector<HTMLDivElement>('#modal-container');
         getModal?.classList.remove("hidden")
         const modalContent = getModalContent(action);
@@ -28,7 +33,7 @@ export const modal = (() => {
                     return generateCategoryForm('Create New', 'Create', '');
                 case 'edit':
                     // Handle 'edit' action
-                    return "edit not added yet";
+                    return generateCategoryForm('Edit', 'Edit', categoryName)
                 case 'remove':
                     // Handle 'remove' action
                     return "remove not added yet";
@@ -63,25 +68,38 @@ export const modal = (() => {
         function generateColorSquares(): string {
             // uses an array of colors to set each square to their specified color
             const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
-    
-            return colors.map(color => `
-                <div class="color-square" style="background-color: ${color}" data-color="${color}"></div>
+        
+            // Check if the color is white or the current category's color, add "selected" class
+            const colorSquaresHTML = colors.map(color => `
+                <div class="color-square ${color === 'white' || color === categoryColor ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
             `).join('');
+        
+            return colorSquaresHTML;
         }
 
         // ... (existing event handler functions)
 
         function handleFormSubmission(event: Event) {
             event.preventDefault();
-            const nameInput = document.getElementById(`categoryName`) as HTMLInputElement;
+            const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
             
             const selectedColorSquare = document.querySelector('.color-square.selected') as HTMLDivElement;
-            if(selectedColorSquare){
+            if (selectedColorSquare) {
                 const selectedColor = selectedColorSquare.getAttribute('data-color');
-                // create new category
-                categories.createCategory(nameInput.value, selectedColor!);
-                toggleModal();
-            }else {
+                if (action === 'edit') {
+                    // Update the selected category class
+                    if (currentCategoryClass) {
+                        categories.editCategory(currentCategoryClass, nameInput.value, selectedColor!);
+                        toggleModal();
+                    } else {
+                        console.error("Error: No category class provided for editing.");
+                    }
+                } else if (action === 'add') {
+                    // Create a new category
+                    categories.createCategory(nameInput.value, selectedColor!);
+                    toggleModal();
+                }
+            } else {
                 alert('Please select a color.');
             }
         }
@@ -132,6 +150,5 @@ export const modal = (() => {
         category,
         addTask,
         editCategory,
-        // Add other modal methods here
     };
 })();
