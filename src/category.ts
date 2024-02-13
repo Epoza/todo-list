@@ -1,6 +1,6 @@
 import './style.css';
 import { modal } from './modal';
-import { tasks } from './task';
+import { Task, tasks } from './task';
 
 export class Category {
     constructor(public name: string, public color: string) {
@@ -97,7 +97,7 @@ export const categories = (() => {
             categoryItem.appendChild(svgButtonContainer);
 
             // Add click event listener to the edit button
-            categoryEdit.addEventListener('click', () => modal('category', newCategory));
+            categoryEdit.addEventListener('click', () => modal.category('edit', newCategory));
         }
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
@@ -114,8 +114,6 @@ export const categories = (() => {
             
 
             if (dataIndex !== null) {
-                // remove all tasks associated with the category
-                tasks.removeAllTasks(dataIndex, true);
                 const index = parseInt(dataIndex, 10);
                 console.log('removed category index' + index)
 
@@ -125,6 +123,12 @@ export const categories = (() => {
 
                 // remove the element from the array
                 categoriesList.splice(index, 1);
+
+                if(tasks.checkCategoryForTasks(dataIndex) === true){
+                    // put modal here and call it
+                    // remove all tasks associated with the category
+                    tasks.removeAllTasks(dataIndex, true);
+                }
 
                 updateCategories();
             }
@@ -147,6 +151,8 @@ export const categories = (() => {
     }
 
     function editCategory(category: Category, newCategoryName: string, newCategoryColor: string): void {
+        console.log(categoriesList)
+
         // find the categoryItem using the unique identifier (data-category)
         const dataIndex = categoriesList.indexOf(category);
 
@@ -165,7 +171,7 @@ export const categories = (() => {
             }
         }
     }
-
+    
     function retrieveCategoriesList(): Category[] {
         return categoriesList;
     }
