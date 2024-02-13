@@ -168,8 +168,11 @@ export const categories = (() => {
                 const categoryName = categoryItem.querySelector('span');
                 categoryName!.textContent = newCategoryName;
                 categoryItem.style.backgroundColor = newCategoryColor;
+                // update the screen
+                categoryItem.click();
             }
         }
+        
     }
     
     function retrieveCategoriesList(): Category[] {
