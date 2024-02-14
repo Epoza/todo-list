@@ -8,7 +8,7 @@ export const modal = (() => {
         const capitalizedContentType = 'Category';
 
         // get the category name and color if available
-        let currentCategoryClass: Category | undefined = categoryClass;
+        let currentCategoryClass = categoryClass || {} as Category;;
         const categoryName = currentCategoryClass?.name ?? '';
         const categoryColor = currentCategoryClass?.color ?? ''
 
@@ -22,7 +22,7 @@ export const modal = (() => {
         formSubmission.addEventListener('submit', handleFormSubmission);
 
         toggleModal();
-
+    
         // event listeners for cancel and close buttons
         document.getElementById('cancel')!.addEventListener('click', handleCancel);
         document.getElementById('close')!.addEventListener('click', handleClose);
@@ -67,16 +67,22 @@ export const modal = (() => {
 
         function generateColorSquares(): string {
             // uses an array of colors to set each square to their specified color
+            
             const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
         
+            console.log(categoryColor)
+        
+            // Check if the color is white or the current category's color (if not empty), add "selected" class
             // Check if the color is white or the current category's color, add "selected" class
             const colorSquaresHTML = colors.map(color => `
-                <div class="color-square ${color === 'white' || color === categoryColor ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
+            <div class="color-square ${color === categoryColor ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
             `).join('');
-        
-            return colorSquaresHTML;
-        }
 
+            return colorSquaresHTML;
+
+    
+        }
+        
         // ... (existing event handler functions)
 
         function handleFormSubmission(event: Event) {
@@ -115,6 +121,16 @@ export const modal = (() => {
             });
         }
 
+        // Move the code to add color square listeners outside the if block
+        if (getModal) {
+            const modalStyle = window.getComputedStyle(getModal);
+            if (modalStyle.display === 'flex') {
+                console.log('hello');
+                console.log(categoryColor);
+                addColorSquareListeners();
+            }
+        }
+
         // Add other modal methods (removeCategory, removeTask, etc.)
         function handleCancel(event: Event) {
             event.preventDefault();
@@ -124,16 +140,6 @@ export const modal = (() => {
         function handleClose(event: Event) {
             event.preventDefault();
             toggleModal();
-        }
-        
-        function toggleModal() {
-            const modalContainer = document.getElementById('modal-container');
-            if (modalContainer?.style.display === 'flex') {
-                modalContainer.style.display = 'none';
-            } else {
-                modalContainer!.style.display = 'flex';
-                addColorSquareListeners();
-            }
         }
 
     }
@@ -146,9 +152,16 @@ export const modal = (() => {
         // Similar structure to addCategory, but with 'edit' action and category parameter
     }
 
+    function toggleModal() {
+        const getModal = document.querySelector<HTMLDivElement>('#modal-container');
+        getModal!.style.display = getModal!.style.display === 'flex' ? 'none' : 'flex';
+    }
+
     return {
         category,
         addTask,
         editCategory,
     };
 })();
+
+  
