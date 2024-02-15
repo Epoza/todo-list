@@ -1,6 +1,6 @@
 import './style.css';
 import { categories, Category } from './category';
-import { tasks } from './task';
+import { Task, tasks } from './task';
 
 export const modal = (() => {
     function category(action: string, categoryClass?: Category) {
@@ -10,7 +10,7 @@ export const modal = (() => {
         // get the category name and color if available
         let currentCategoryClass = categoryClass || {} as Category;;
         const categoryName = currentCategoryClass?.name ?? '';
-        const categoryColor = currentCategoryClass?.color ?? ''
+        const categoryColor = currentCategoryClass?.color ?? 'white'
 
         const getModal = document.querySelector<HTMLDivElement>('#modal-container');
         getModal?.classList.remove("hidden")
@@ -25,7 +25,7 @@ export const modal = (() => {
     
         // event listeners for cancel and close buttons
         document.getElementById('cancel')!.addEventListener('click', handleCancel);
-        document.getElementById('close')!.addEventListener('click', handleClose);
+        document.getElementById('close')!.addEventListener('click', handleCancel);
 
         function getModalContent(action: string): string {
             switch (action) {
@@ -36,13 +36,30 @@ export const modal = (() => {
                     return generateCategoryForm('Edit', 'Edit', categoryName)
                 case 'remove':
                     // Handle 'remove' action
-                    return "remove not added yet";
+                    return generateCategoryForm('Remove', 'Remove', categoryName)
                 default:
                     throw new Error(`Error: '${action}' is not a listed action`);
             }
         }
 
         function generateCategoryForm(headerText: string, buttonText: string, defaultValue: string): string {
+            if(action === 'remove'){
+                return `
+                <div id="modal-content">
+                    <div id="modalHeader">
+                        <h2 class="large-text">${headerText} ${capitalizedContentType}</h2>
+                        <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
+                    </div>
+                    <form id="${contentType}Form">
+                        <div>Remove this category: "${categoryName}"</div>
+                        <div class="modal${capitalizedContentType}Buttons">
+                            <button class="modal-button" id="cancel">Cancel</button>
+                            <button class="modal-button" type="submit">${buttonText} ${capitalizedContentType}</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            }
             return `
                 <div id="modal-content">
                     <div id="modalHeader">
@@ -70,43 +87,34 @@ export const modal = (() => {
             
             const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
         
-            console.log(categoryColor)
-        
-            // Check if the color is white or the current category's color (if not empty), add "selected" class
-            // Check if the color is white or the current category's color, add "selected" class
+            // selects the current category color 
             const colorSquaresHTML = colors.map(color => `
             <div class="color-square ${color === categoryColor ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
             `).join('');
 
             return colorSquaresHTML;
-
-    
         }
-        
-        // ... (existing event handler functions)
 
         function handleFormSubmission(event: Event) {
             event.preventDefault();
-            const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
-            
-            const selectedColorSquare = document.querySelector('.color-square.selected') as HTMLDivElement;
-            if (selectedColorSquare) {
-                const selectedColor = selectedColorSquare.getAttribute('data-color');
-                if (action === 'edit') {
-                    // Update the selected category class
-                    if (currentCategoryClass) {
-                        categories.editCategory(currentCategoryClass, nameInput.value, selectedColor!);
-                        toggleModal();
-                    } else {
-                        console.error("Error: No category class provided for editing.");
-                    }
-                } else if (action === 'add') {
-                    // Create a new category
-                    categories.createCategory(nameInput.value, selectedColor!);
-                    toggleModal();
-                }
+        
+            if (action === 'remove') {
+                handleRemoveSubmission(currentCategoryClass);
             } else {
-                alert('Please select a color.');
+                const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
+                const selectedColorSquare = document.querySelector('.color-square.selected') as HTMLDivElement;
+        
+                if (selectedColorSquare) {
+                    const selectedColor = selectedColorSquare.getAttribute('data-color');
+        
+                    if (action === 'edit') {
+                        handleEditSubmission(currentCategoryClass, nameInput, selectedColor);
+                    } else if (action === 'add') {
+                        handleAddSubmission(nameInput, selectedColor);
+                    }
+                } else {
+                    alert('Please select a color.');
+                }
             }
         }
 
@@ -125,21 +133,8 @@ export const modal = (() => {
         if (getModal) {
             const modalStyle = window.getComputedStyle(getModal);
             if (modalStyle.display === 'flex') {
-                console.log('hello');
-                console.log(categoryColor);
                 addColorSquareListeners();
             }
-        }
-
-        // Add other modal methods (removeCategory, removeTask, etc.)
-        function handleCancel(event: Event) {
-            event.preventDefault();
-            toggleModal();
-        }
-
-        function handleClose(event: Event) {
-            event.preventDefault();
-            toggleModal();
         }
 
     }
@@ -155,6 +150,40 @@ export const modal = (() => {
     function toggleModal() {
         const getModal = document.querySelector<HTMLDivElement>('#modal-container');
         getModal!.style.display = getModal!.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    function handleRemoveSubmission(currentClass: Category | Task) {
+        // handle remove action
+        if(currentClass instanceof Category){
+            categories.removeCategory(currentClass);
+            toggleModal();
+        }
+        //  for Task, remove the task
+    }
+    
+    function handleEditSubmission(currentClass: Category | Task, nameInput: HTMLInputElement, selectedColor: string | null) {
+        // handle edit action
+        if (currentClass instanceof Category) {
+            categories.editCategory(currentClass, nameInput.value, selectedColor!);
+            toggleModal();
+        } else {
+            console.error("Error: No class provided for editing.");
+        }
+        // add else if for task later
+    }
+    
+    function handleAddSubmission(nameInput: HTMLInputElement, selectedColor: string | null) {
+        // handle add action
+        categories.createCategory(nameInput.value, selectedColor!);
+        toggleModal();
+
+        //handle add for task
+    }
+
+    function handleCancel(event: Event) {
+        // user clicks X or cancel
+        event.preventDefault();
+        toggleModal();
     }
 
     return {
