@@ -90,7 +90,7 @@ export const categories = (() => {
             categoryRemove.addEventListener('click', (event) => {
                 // Prevent the click event from propagating to the parent elements
                 event.stopPropagation();
-                removeCategory(event);
+                modal.category('remove', newCategory)
             });
             svgButtonContainer.appendChild(categoryRemove);
 
@@ -104,35 +104,29 @@ export const categories = (() => {
         updateCategories();
     }
 
-    function removeCategory(event: Event): void {
-        const target = event.target as HTMLElement;
-        const categoryRemoveButton = target.closest('.svgButton[data-remove]');
-        //const allCategory = document.querySelector(`[data-category="0"]`);
+    function removeCategory(currentCategory: Category): void {
+        // Find the index of the current category in the categoriesList array
+        const index = categoriesList.indexOf(currentCategory);
 
-        if (categoryRemoveButton) {
-            const dataIndex = categoryRemoveButton.getAttribute('data-remove');
-            
+        if (index !== -1) {
+            console.log('removed category index: ' + index);
 
-            if (dataIndex !== null) {
-                const index = parseInt(dataIndex, 10);
-                console.log('removed category index' + index)
+            // Remove the corresponding element from the DOM
+            const categoryElement = document.querySelector(`.myCategories[data-category="${index}"]`);
+            categoryElement?.remove();
 
-                // remove the corresponding element from the DOM
-                const categoryElement = document.querySelector(`.myCategories[data-category="${index}"]`);
-                categoryElement?.remove();
+            // Remove the element from the array
+            categoriesList.splice(index, 1);
 
-                // remove the element from the array
-                categoriesList.splice(index, 1);
-
-                if(tasks.checkCategoryForTasks(dataIndex) === true){
-                    // put modal here and call it
-                    // remove all tasks associated with the category
-                    tasks.removeAllTasks(dataIndex, true);
-                }
-
-                updateCategories();
+            if (tasks.checkCategoryForTasks(index.toString()) === true) {
+                // Put modal here and call it
+                // Remove all tasks associated with the category
+                tasks.removeAllTasks(index.toString(), true);
             }
+
+            updateCategories();
         }
+        console.log(categoriesList)
     }
 
 
