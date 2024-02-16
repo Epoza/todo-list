@@ -16,13 +16,11 @@ document.body.addEventListener('click', (event: MouseEvent) => {
     // perform different actions based on the button ID
     switch (buttonId) {
       case 'category': // newCategory button clicked
-      // modal.addCategory();
         modal.category('add');
         event.stopPropagation(); // Stop the click event from propagating
         break;
       case 'task': // newTask button clicked
-      //modal.addTask()
-        //modal(buttonId);
+        modal.task('add')
         event.stopPropagation(); // Stop the click event from propagating
         break;
     }
