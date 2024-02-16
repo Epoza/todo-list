@@ -129,7 +129,7 @@ export const modal = (() => {
             });
         }
 
-        // Move the code to add color square listeners outside the if block
+        // add event listener
         if (getModal) {
             const modalStyle = window.getComputedStyle(getModal);
             if (modalStyle.display === 'flex') {
@@ -139,12 +139,104 @@ export const modal = (() => {
 
     }
 
-    function addTask() {
-        // Similar structure to addCategory, but for 'task'
-    }
+    function task(action: string, taskClass?: Task) {
+        const contentType = 'task';
+        const capitalizedContentType = 'Task';
 
-    function editCategory(category: Category) {
-        // Similar structure to addCategory, but with 'edit' action and category parameter
+        // get the task name and color if available
+        let currentTaskClass = taskClass || {} as Task;
+        const taskName = currentTaskClass?.name ?? '';
+        const taskDescription = currentTaskClass?.description ?? ''
+
+        const getModal = document.querySelector<HTMLDivElement>('#modal-container');
+        getModal?.classList.remove("hidden")
+        const modalContent = getModalContent(action);
+        getModal!.innerHTML = modalContent
+
+        // event listener for form submission
+        const formSubmission = document.getElementById(`taskForm`) as HTMLFormElement;
+        formSubmission.addEventListener('submit', handleFormSubmission);
+
+        toggleModal();
+    
+        // event listeners for cancel and close buttons
+        document.getElementById('cancel')!.addEventListener('click', handleCancel);
+        document.getElementById('close')!.addEventListener('click', handleCancel);
+
+        function getModalContent(action: string): string {
+            switch (action) {
+                case 'add':
+                    return generateTaskForm('Create New', 'Create', '');
+                case 'edit':
+                    // Handle 'edit' action
+                    //return generateTaskForm('Edit', 'Edit', taskName)
+                case 'remove':
+                    // Handle 'remove' action
+                    return generateTaskForm('Remove', 'Remove', taskName)
+                default:
+                    throw new Error(`Error: '${action}' is not a listed action`);
+            }
+        }
+
+        function generateTaskForm(headerText: string, buttonText: string, defaultValue: string): string {
+            if(action === 'remove'){
+                return `
+                <div id="modal-content">
+                    <div id="modalHeader">
+                        <h2 class="large-text">${headerText} ${capitalizedContentType}</h2>
+                        <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
+                    </div>
+                    <form id="${contentType}Form">
+                        <div>Remove this task: "${taskName}"</div>
+                        <div class="modal${capitalizedContentType}Buttons">
+                            <button class="modal-button" id="cancel">Cancel</button>
+                            <button class="modal-button" type="submit">${buttonText} ${capitalizedContentType}</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            }
+            return `
+                <div id="modal-content">
+                    <div id="modalHeader">
+                    <h2>${headerText} ${capitalizedContentType}</h2>
+                    <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
+                    </div>
+                    <form id="${contentType}Form">
+                    <label for="${contentType}Name">${capitalizedContentType} Name*</label>
+                    <input type="text" id="${contentType}Name" name="${contentType}Name" placeholder="Clean room" value="${defaultValue}" required>
+                    <label for="${contentType}Description">${capitalizedContentType} Description:</label>
+                    <textarea id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional"></textarea>
+                    <div class="modal${capitalizedContentType}Buttons">
+                    <button class="modal-button" id="cancel">Cancel</button>
+                    <button class="modal-button" type="submit">${buttonText} ${capitalizedContentType}</button>
+                    </div>
+                    </form>
+                </div>
+            `;
+        }
+
+        function handleFormSubmission(event: Event) {
+            event.preventDefault();
+        
+            if (action === 'remove') {
+                console.log("remove task..")
+                handleRemoveSubmission(currentTaskClass);
+            } else {
+                const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
+                const taskDescriptionInput = document.getElementById(`${contentType}Description`) as HTMLInputElement;
+                if (action === 'edit') {
+                    //handleEditSubmission(currentTaskClass, nameInput, selectedColor);
+                } else if (action === 'add') {
+                    // creating a new task
+                    const selectedCategory = document.querySelector('.myCategories.categorySelected');
+                    const categoryIndex = selectedCategory!.getAttribute('data-category');
+                    tasks.createTask(nameInput.value, categoryIndex!, taskDescriptionInput.value);
+                    toggleModal();
+                }
+            }
+        }
+
     }
 
     function toggleModal() {
@@ -157,6 +249,11 @@ export const modal = (() => {
         if(currentClass instanceof Category){
             categories.removeCategory(currentClass);
             toggleModal();
+        } else if (currentClass instanceof Task){
+            tasks.removeTask(currentClass);
+            toggleModal();
+        } else {
+            console.error('Error: No class provided for removal')
         }
         //  for Task, remove the task
     }
@@ -188,8 +285,7 @@ export const modal = (() => {
 
     return {
         category,
-        addTask,
-        editCategory,
+        task,
     };
 })();
 
