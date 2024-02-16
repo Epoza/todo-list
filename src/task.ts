@@ -1,5 +1,5 @@
 import './style.css';
-//import { modal } from './modal';
+import { modal } from './modal';
 
 export class Task {
     constructor(public name: string, public categoryIndex: string, public description?: string) {
@@ -13,7 +13,6 @@ export const tasks = (() => {
 
     createTask('First', '0', 'Hello There')
     createTask('Second', '3', 'Hello Thre')
-    createTask('Third, fourthcat', '4', 'four')
     createTask('Four, fifthcat', '5', 'five')
     createTask('Fifth, fifthcat', '5', 'fivess')
     function createTask(name: string, categoryIndex: string, description?: string): void {
@@ -28,6 +27,7 @@ export const tasks = (() => {
         let taskContainer = document.getElementById(taskContainerId);
 
         if (!taskContainer) {
+            console.log(`creating new task container for category index ${categoryIndex}`)
             // create new task container only if it doesn't exist
             taskContainer = document.createElement('div');
             taskContainer.id = taskContainerId;
@@ -143,8 +143,6 @@ export const tasks = (() => {
             const taskElement = document.querySelector(`.myTask[data-task="${taskToRemoveIndex}"`);
             taskElement?.remove();
 
-            
-
             console.log(`Removed task with index ${taskToRemoveIndex}`);
             console.log(tasksList);
         });
@@ -175,18 +173,21 @@ export const tasks = (() => {
             // Remove the task container associated with the category
             const taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
             taskContainer?.remove()
-            
+            updateTasks(categoryIndex)
 
         }
-        
-
-        
     }
 
     function handleButtonClick(event: Event) {
         const target = event.target as HTMLElement;
         const button = target.closest('.svgButton');
 
+        // get the current task
+        const taskElement = button!.closest('.myTask') as HTMLElement;
+        const dataIndex = taskElement.getAttribute('data-task');
+        const taskIndex = parseInt(dataIndex!, 10);
+        const currentTask = tasksList[taskIndex];
+                    
         enum ButtonId {
             checkButton = 'checkButton',
             DescriptionButton = 'descriptionButton',
@@ -233,10 +234,10 @@ export const tasks = (() => {
                     break;
                 case ButtonId.EditButton:
                     // go to editTask
-                    console.log('Edit');
+                    console.log('Edit task');
                     break;
                 case ButtonId.RemoveButton:
-                    removeTask(event)
+                    modal.task('remove', currentTask);// pass in newTask
                     break;
                 // Add more cases for additional buttons
                 default:
@@ -245,41 +246,32 @@ export const tasks = (() => {
         }
     }
 
-    function removeTask(event: Event): void {
-        console.log('remove task')
-        const target = event.target as HTMLElement;
-        const taskRemoveButton = target.closest('.svgButton[data-remove-task]');
+    function removeTask(currentClass: Task): void {
+        const taskIndex = tasksList.indexOf(currentClass);
     
-        if (taskRemoveButton) {
-            const dataIndex = taskRemoveButton.getAttribute('data-remove-task');
-
-            if (dataIndex !== null) {
-                const taskIndex = parseInt(dataIndex, 10);
+        // Remove the task from the tasksList array
+        tasksList.splice(taskIndex, 1);
     
-                // Remove the task from the tasksList array
-                const taskElement = document.querySelector(`.myTask[data-task="${taskIndex}"`);
-                taskElement?.remove();
+        // Remove the task element from the DOM
+        const taskElement = document.querySelector(`.myTask[data-task="${taskIndex}"`);
+        taskElement?.remove();
     
-                // Remove the task element from the array
-                tasksList.splice(taskIndex, 1);
+        console.log(`Removed task with index ${taskIndex}`);
+        console.log(tasksList);
     
-                console.log(`Removed task with index ${taskIndex}`);
-                console.log(tasksList);
+        // Update data values when removing items
+        const taskElements = document.querySelectorAll('.myTask');
+        taskElements.forEach((taskElement, newIndex) => {
+            taskElement.setAttribute('data-task', newIndex.toString());
     
-                // updates data values when removing items
-                const taskElements = document.querySelectorAll('.myTask');
-                taskElements.forEach((taskElement, newIndex) => {
-                    taskElement.setAttribute('data-task', newIndex.toString());
-    
-                    // update data-remove attribute of the remove button
-                    const removeButton = taskElement.querySelector('.svgButton[data-remove-task]');
-                    if (removeButton) {
-                        removeButton.setAttribute('data-remove-task', newIndex.toString());
-                    }
-                });
+            // Update data-remove attribute of the remove button
+            const removeButton = taskElement.querySelector('.svgButton[data-remove-task]');
+            if (removeButton) {
+                removeButton.setAttribute('data-remove-task', newIndex.toString());
             }
-        }
+        });
     }
+    
     
 
     function updateTasks(categoryIndex: string): void {
@@ -292,10 +284,14 @@ export const tasks = (() => {
             const containerElement = container as HTMLElement;
             containerElement.style.display = isVisible ? 'block' : 'none';
             
-            // remove empty taskContainer
-            if (!containerElement.hasChildNodes()) {
-                containerElement.remove();
-            }
+            // Check if the container has child tasks
+        const hasChildTasks = containerElement.querySelector('.myTask') !== null;
+
+        // Remove the task container only if it has no child tasks
+        if (!hasChildTasks) {
+            containerElement.remove();
+            console.log(`Removed empty task container ${containerElement.id}`);
+        }
         });
 
         // Change the add task button styling
@@ -317,12 +313,18 @@ export const tasks = (() => {
  
     }
 
+    function checkCategoryForTasks(categoryIndex: string): boolean{
+        console.log(tasksList.some(task => task.categoryIndex === categoryIndex))
+        return tasksList.some(task => task.categoryIndex === categoryIndex);
+    }
+
     return {
         createTask,
         handleButtonClick,
         removeAllTasks,
         removeTask,
         updateTasks,
+        checkCategoryForTasks,
         editTask,
     };
 })();
