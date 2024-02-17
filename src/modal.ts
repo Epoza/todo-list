@@ -158,17 +158,6 @@ export const modal = (() => {
         toggleModal();
     }
 
-    function handleEditSubmission(currentClass: Category | Task, nameInput: HTMLInputElement, selectedColor: string | null) {
-        if (currentClass instanceof Category) {
-            
-        } else if (currentClass instanceof Task) {
-            // handle edit task
-        } else {
-            console.error('Error: No class provided for editing.');
-        }
-        toggleModal();
-    }
-
     function handleCancel(event: Event) {
         event.preventDefault();
         toggleModal();
