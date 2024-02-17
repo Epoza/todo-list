@@ -129,6 +129,12 @@ export const categories = (() => {
                 // Remove all tasks associated with the category
                 tasks.removeAllTasks(index.toString(), true);
             }
+            
+            // Select the first category after removal
+            const firstCategoryElement = document.querySelector('.myCategories[data-category="0"]') as HTMLElement;
+            if (firstCategoryElement) {
+                firstCategoryElement.click();
+            }
 
             updateCategories();
         }
