@@ -125,12 +125,15 @@ export const categories = (() => {
             categoriesList.splice(index, 1);
 
             if (tasks.checkCategoryForTasks(index.toString()) === true) {
-                // Put modal here and call it
                 // Remove all tasks associated with the category
+                console.log(index.toString())
                 tasks.removeAllTasks(index.toString(), true);
+            } else {
+                // update the other tasks and associated categories
+                tasks.updateTasksAfterCategoryRemoval(index.toString())
             }
             
-            // Select the first category after removal
+            //Select the first category after removal
             const firstCategoryElement = document.querySelector('.myCategories[data-category="0"]') as HTMLElement;
             if (firstCategoryElement) {
                 firstCategoryElement.click();
