@@ -101,6 +101,12 @@ export const categories = (() => {
         }
         categoryListContainer?.appendChild(categoryItem);
         categoriesList.push(newCategory);
+
+        // triggers click event on the new category
+        if(newCategory && categoryIndex > 2){
+            categoryItem.click();
+        }
+
         updateCategories();
     }
 
