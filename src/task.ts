@@ -235,6 +235,7 @@ export const tasks = (() => {
                 case ButtonId.EditButton:
                     // go to editTask
                     console.log('Edit task');
+                    modal.task('edit', currentTask);
                     break;
                 case ButtonId.RemoveButton:
                     modal.task('remove', currentTask);// pass in newTask
@@ -273,7 +274,7 @@ export const tasks = (() => {
     }
     
     
-
+    // try getting the category index inside of the updatetask instead of as parameter
     function updateTasks(categoryIndex: string): void {
         console.log('update tasks category index' + categoryIndex)
         // Checks to see what tasks to show based on category selected
@@ -309,8 +310,35 @@ export const tasks = (() => {
         }
     }
 
-    function editTask(): void {
- 
+    function editTask(currentTask: Task, newName: string, newDescription?:string): void {
+        const taskIndex = tasksList.indexOf(currentTask);
+
+        if (taskIndex !== -1) {
+            // Update the task with the new name and description
+            currentTask.name = newName;
+            currentTask.description = newDescription;
+    
+            // Update the task element in the DOM
+            const taskElement = document.querySelector(`.myTask[data-task="${taskIndex}"`);
+            if (taskElement) {
+                // Update the displayed name
+                const taskNameElement = taskElement.querySelector('span');
+                if (taskNameElement) {
+                    taskNameElement.textContent = newName;
+                }
+    
+                // Update the description dropdown content
+                const descriptionContentElement = taskElement.querySelector('.descriptionDropdown span');
+                if (descriptionContentElement) {
+                    descriptionContentElement.textContent = newDescription || 'No description available';
+                }
+            }
+    
+            console.log(`Edited task with index ${taskIndex}`);
+            console.log(tasksList);
+        } else {
+            console.error('Error: Task not found for editing.');
+        }
     }
 
     function checkCategoryForTasks(categoryIndex: string): boolean{
