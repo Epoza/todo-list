@@ -15,6 +15,7 @@ export const tasks = (() => {
     createTask('Second', '3', 'Hello Thre')
     createTask('Four, fifthcat', '5', 'five')
     createTask('Fifth, fifthcat', '5', 'fivess')
+    
     function createTask(name: string, categoryIndex: string, description?: string): void {
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
@@ -133,51 +134,6 @@ export const tasks = (() => {
         updateTasks(categoryIndex!)
     }
 
-    function removeAllTasks(categoryIndex: string, categoryRemoved: boolean) {
-        // Remove all tasks in the specified category
-        const tasksToRemove = tasksList.filter(task => task.categoryIndex === categoryIndex);
-        tasksToRemove.forEach(taskToRemove => {
-            const taskToRemoveIndex = tasksList.indexOf(taskToRemove);
-            tasksList.splice(taskToRemoveIndex, 1);
-
-            const taskElement = document.querySelector(`.myTask[data-task="${taskToRemoveIndex}"`);
-            taskElement?.remove();
-
-            console.log(`Removed task with index ${taskToRemoveIndex}`);
-            console.log(tasksList);
-        });
-
-        // Update category index for tasks with index greater than the removed category
-        if(categoryRemoved == true){
-            tasksList.forEach(task => {
-                if (parseInt(task.categoryIndex, 10) > parseInt(categoryIndex, 10)) {
-                    task.categoryIndex = (parseInt(task.categoryIndex, 10) - 1).toString();
-                }
-            });
-            // Shift down taskContainer elements with IDs greater than categoryIndex
-            const allTaskContainers = document.querySelectorAll('.taskContainer');
-            allTaskContainers.forEach(container => {
-                const containerIndex = parseInt(container.id.split('-')[1], 10);
-                if (containerIndex > parseInt(categoryIndex, 10)) {
-                    // Shift down the container by updating its ID
-                    const newContainerIndex = containerIndex - 1;
-                    container.id = `taskContainer-${newContainerIndex}`;
-
-                    // Update assigned-category attribute of the tasks within the container
-                    const tasksInContainer = container.querySelectorAll('.myTask');
-                    tasksInContainer.forEach(taskElement => {
-                        taskElement.setAttribute('assigned-category', newContainerIndex.toString());
-                    });
-                }
-            });
-            // Remove the task container associated with the category
-            const taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
-            taskContainer?.remove()
-            updateTasks(categoryIndex)
-
-        }
-    }
-
     function handleButtonClick(event: Event) {
         const target = event.target as HTMLElement;
         const button = target.closest('.svgButton');
@@ -249,7 +205,6 @@ export const tasks = (() => {
 
     function removeTask(currentClass: Task): void {
         const taskIndex = tasksList.indexOf(currentClass);
-    
         // Remove the task from the tasksList array
         tasksList.splice(taskIndex, 1);
     
@@ -271,10 +226,9 @@ export const tasks = (() => {
                 removeButton.setAttribute('data-remove-task', newIndex.toString());
             }
         });
+        // updateTasks(currentClass.categoryIndex.toString())
     }
     
-    
-    // try getting the category index inside of the updatetask instead of as parameter
     function updateTasks(categoryIndex: string): void {
         console.log('update tasks category index' + categoryIndex)
         // Checks to see what tasks to show based on category selected
@@ -341,6 +295,56 @@ export const tasks = (() => {
         }
     }
 
+    function removeAllTasks(categoryIndex: string, categoryRemoved: boolean) {
+        // Remove all tasks in the specified category
+        const tasksToRemove = tasksList.filter(task => task.categoryIndex === categoryIndex);
+        tasksToRemove.forEach(taskToRemove => {
+            const taskToRemoveIndex = tasksList.indexOf(taskToRemove);
+            tasksList.splice(taskToRemoveIndex, 1);
+
+            const taskElement = document.querySelector(`.myTask[data-task="${taskToRemoveIndex}"`);
+            taskElement?.remove();
+
+            console.log(`Removed task with index ${taskToRemoveIndex}`);
+            console.log(tasksList);
+        });
+
+        // Only when removing a category
+        if(categoryRemoved){
+            // Remove the task container associated with the category
+            const taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
+            taskContainer?.remove()
+            // update the other tasks and associated categories
+            updateTasksAfterCategoryRemoval(categoryIndex);
+        }
+    }
+
+    function updateTasksAfterCategoryRemoval(categoryIndex: string){
+        // Update category index for tasks with index greater than the removed category
+        tasksList.forEach(task => {
+            if (parseInt(task.categoryIndex, 10) > parseInt(categoryIndex, 10)) {
+                task.categoryIndex = (parseInt(task.categoryIndex, 10) - 1).toString();
+            }
+        });
+        // Shift down taskContainer elements with IDs greater than categoryIndex
+        const allTaskContainers = document.querySelectorAll('.taskContainer');
+        allTaskContainers.forEach(container => {
+            const containerIndex = parseInt(container.id.split('-')[1], 10);
+            if (containerIndex > parseInt(categoryIndex, 10)) {
+                // Shift down the container by updating its ID
+                const newContainerIndex = containerIndex - 1;
+                container.id = `taskContainer-${newContainerIndex}`;
+
+                // Update assigned-category attribute of the tasks within the container
+                const tasksInContainer = container.querySelectorAll('.myTask');
+                tasksInContainer.forEach(taskElement => {
+                    taskElement.setAttribute('assigned-category', newContainerIndex.toString());
+                });
+            }
+        });
+        updateTasks(categoryIndex)
+    }
+
     function checkCategoryForTasks(categoryIndex: string): boolean{
         console.log(tasksList.some(task => task.categoryIndex === categoryIndex))
         return tasksList.some(task => task.categoryIndex === categoryIndex);
@@ -353,6 +357,7 @@ export const tasks = (() => {
         removeTask,
         updateTasks,
         checkCategoryForTasks,
+        updateTasksAfterCategoryRemoval,
         editTask,
     };
 })();
