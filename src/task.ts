@@ -226,7 +226,7 @@ export const tasks = (() => {
                 removeButton.setAttribute('data-remove-task', newIndex.toString());
             }
         });
-        // updateTasks(currentClass.categoryIndex.toString())
+        updateTasks(currentClass.categoryIndex.toString())
     }
     
     function updateTasks(categoryIndex: string): void {
