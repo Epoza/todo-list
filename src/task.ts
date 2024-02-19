@@ -2,8 +2,10 @@ import './style.css';
 import { modal } from './modal';
 
 export class Task {
-    constructor(public name: string, public categoryIndex: string, public description?: string) {
+    constructor(public name: string, public categoryIndex: string, public important: boolean, public date?: string, public description?: string) {
         this.name = name;
+        this.important = important;
+        this.date = date;
         this.description = description;
     }
 }
@@ -11,17 +13,19 @@ export class Task {
 export const tasks = (() => {
     let tasksList: Task[] = [];
 
-    createTask('First', '0', 'Hello There')
-    createTask('Second', '3', 'Hello Thre')
-    createTask('Four, fifthcat', '5', 'five')
-    createTask('Fifth, fifthcat', '5', 'fivess')
+    createTask('First', '0', true, '02/20/2024', 'Hello There')
+    createTask('Second', '3', false, '02/21/2024', 'Hello Thre')
+    createTask('Four, fifthcat', '5', false, '02/22/2024', 'five')
+    createTask('Fifth, fifthcat', '5', true, '02/22/2024', 'fivess')
     
-    function createTask(name: string, categoryIndex: string, description?: string): void {
+    function createTask(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
 
-        const newTask = new Task(name, categoryIndex!, description);
+        const newTask = new Task(name, categoryIndex!, important, date, description);
         const taskIndex = tasksList.length;
+        console.log(important);
+        console.log(date);
 
         // create or retrieve the task container for the selected category
         const taskContainerId = `taskContainer-${categoryIndex}`;
@@ -58,6 +62,9 @@ export const tasks = (() => {
 
         const taskContent = document.createElement('div');
         taskContent.id = 'taskContent'
+
+        // add class for important tasks
+        taskContent.classList.add(important ? 'important-task' : 'normal-task');
 
         // html structure for checkbox
         // changed to check task when user clicks
@@ -112,6 +119,11 @@ export const tasks = (() => {
         taskName.textContent = newTask.name;
         taskContent.appendChild(taskName);
 
+        // display the selected date
+        const taskDate = document.createElement('span');
+        taskDate.textContent = newTask.date ?? '';
+        taskContent.appendChild(taskDate);
+
         // append button container to task
         taskContent.appendChild(taskSvgButtonContainer);
 
@@ -127,6 +139,7 @@ export const tasks = (() => {
         descriptionDropdown.appendChild(descriptionContent);
         taskItem.appendChild(descriptionDropdown);
         tasksList.push(newTask);
+        console.log(newTask)
 
         // append
         taskContainer.appendChild(taskItem);
