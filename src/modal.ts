@@ -25,51 +25,67 @@ export const modal = (() => {
             const name = classInfo?.name ?? '';
             const color = (classInfo as Category)?.color ?? '';
             const description = (classInfo as Task)?.description ?? '';
-
+            const date = (classInfo as Task)?.date ?? '';
+            const important = (classInfo as Task)?.important ?? '';
+            
             if (action === 'remove') {
                 return `
-                    <div id="modal-content">
-                        <div id="modalHeader">
-                            <h2 class="large-text">${action === 'remove' ? 'Remove' : 'Edit'} ${capitalizedContentType}</h2>
-                            <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
-                        </div>
-                        <form id="${contentType}Form">
-                            <div>${action === 'remove' ? `Remove this ${contentType}: "${name}"` : ''}</div>
-                            <div class="modal${capitalizedContentType}Buttons">
-                                <button class="modal-button" id="cancel">Cancel</button>
-                                <button class="modal-button" type="submit">${action === 'remove' ? 'Remove' : 'Edit'} ${capitalizedContentType}</button>
+                        <div id="modal-content">
+                            <div id="modalHeader">
+                                <h2 class="large-text">${action === 'remove' ? 'Remove' : 'Edit'} ${capitalizedContentType}</h2>
+                                <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
                             </div>
-                        </form>
-                    </div>
-                `;
-            }
+                            <form id="${contentType}Form">
+                                <div>${action === 'remove' ? `Remove this ${contentType}: "${name}"` : ''}</div>
+                                <div class="modal${capitalizedContentType}Buttons">
+                                    <button class="modal-button" id="cancel">Cancel</button>
+                                    <button class="modal-button" type="submit">${action === 'remove' ? 'Remove' : 'Edit'} ${capitalizedContentType}</button>
+                                </div>
+                            </form>
+                        </div>
+                    `;
+                }
 
-            return `
+                return `
                 <div id="modal-content">
-                    <div id="modalHeader">
-                        <h2 class="large-text">${action === 'add' ? 'Create New' : 'Edit'} ${capitalizedContentType}</h2>
-                        <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
-                    </div>
-                    <form id="${contentType}Form">
-                        <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                        <input type="text" id="${contentType}Name" name="${contentType}Name" value="${name}" maxlength="30" required>
-                        ${contentType === 'task' ? `
-                            <label for="${contentType}Description">${capitalizedContentType} Description:</label>
-                            <textarea id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional">${description}</textarea>
-                        ` : `
-                            <label for="${contentType}Color">${capitalizedContentType} Color</label>
-                            <div class="color-options">
-                                ${generateColorSquares(color)}
-                            </div>
-                        `}
-                        <div class="modal${capitalizedContentType}Buttons">
-                            <button class="modal-button" id="cancel">Cancel</button>
-                            <button class="modal-button" type="submit">${action === 'add' ? 'Create' : 'Edit'} ${capitalizedContentType}</button>
-                        </div>
-                    </form>
+                <div id="modalHeader">
+                    <h2 class="large-text">${action === 'add' ? 'Create New' : 'Edit'} ${capitalizedContentType}</h2>
+                    <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
                 </div>
+                <form id="${contentType}Form">
+                    <label for="${contentType}Name">${capitalizedContentType} Name*</label>
+                    <input type="text" id="${contentType}Name" name="${contentType}Name" value="${name}" maxlength="30" required>
+            
+                    ${contentType === 'task' ? `
+                        <label for="${contentType}Description">${capitalizedContentType} Description:</label>
+                        <textarea id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional">${description}</textarea>
+            
+                        <label for="${contentType}Date">Due Date:</label>
+                        <input type="date" id="${contentType}Date" name="${contentType}Date" value="${date}">
+
+                        <div class="important-checkbox">
+                            <label for="${contentType}Important">Important: </label>
+                            <input type="checkbox" id="${contentType}Important" name="${contentType}Important" ${important} ? 'checked' : ''>
+                            
+                        </div>
+            
+                    ` : `
+                        <label for="${contentType}Color">${capitalizedContentType} Color</label>
+                        <div class="color-options">
+                            ${generateColorSquares(color)}
+                        </div>
+                    `}
+            
+                    <div class="modal${capitalizedContentType}Buttons">
+                        <button class="modal-button" id="cancel">Cancel</button>
+                        <button class="modal-button" type="submit">${action === 'add' ? 'Create' : 'Edit'} ${capitalizedContentType}</button>
+                    </div>
+                </form>
+            </div>
             `;
         }
+
+        
 
         function generateColorSquares(selectedColor: string): string {
             const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
@@ -115,6 +131,11 @@ export const modal = (() => {
         function handleTaskAction(nameInput: HTMLInputElement) {
             // possibly change to let
             const taskDescriptionInput = document.getElementById(`${contentType}Description`) as HTMLInputElement;
+            let taskImportantInput = document.getElementById(`${contentType}Important`) as HTMLInputElement;
+            let taskDateInput = document.getElementById(`${contentType}Date`) as HTMLInputElement;
+            // change the formatting of the date if dateInput contains a date
+            let dateValue = taskDateInput.value ? new Date(taskDateInput.value).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '';
+
             if(action === 'edit' && currentClass instanceof Task){
                 console.log('task edit')
                 tasks.editTask(currentClass, nameInput.value, taskDescriptionInput.value)
@@ -122,7 +143,11 @@ export const modal = (() => {
             } else if (action === 'add') {
                 const selectedCategory = document.querySelector('.myCategories.categorySelected');
                 const categoryIndex = selectedCategory!.getAttribute('data-category');
-                tasks.createTask(nameInput.value, categoryIndex!, taskDescriptionInput.value);
+                // if no date is given, show no date
+                
+                console.log(dateValue)
+
+                tasks.createTask(nameInput.value, categoryIndex!, taskImportantInput.checked, dateValue, taskDescriptionInput.value);
                 toggleModal();
             }
         }
