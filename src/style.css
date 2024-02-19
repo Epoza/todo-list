@@ -158,6 +158,6 @@ span{
   border: 1px solid black;
 }
 
-img#checked {
-  /*  change button to checked and cross out task name and make opacity lighter*/
+.important-task {
+  background-color: rgb(255, 254, 234);
 }
