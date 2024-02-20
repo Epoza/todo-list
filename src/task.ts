@@ -13,10 +13,10 @@ export class Task {
 export const tasks = (() => {
     let tasksList: Task[] = [];
 
-    createTask('First', '0', true, '02/20/2024', 'Hello There')
-    createTask('Second', '3', false, '02/21/2024', 'Hello Thre')
-    createTask('Four, fifthcat', '5', false, '02/22/2024', 'five')
-    createTask('Fifth, fifthcat', '5', true, '02/22/2024', 'fivess')
+    createTask('First', '0', true, '02-20-2024', 'Hello There')
+    createTask('Second', '3', false, '02-21-2024', 'Hello Thre')
+    createTask('Four, fifthcat', '5', false, '02-22-2024', 'five')
+    createTask('Fifth, fifthcat', '5', true, '02-22-2024', 'fivess')
     
     function createTask(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
         // use for taskContainer placement
@@ -116,11 +116,13 @@ export const tasks = (() => {
 
         // display the task name
         const taskName = document.createElement('span');
+        taskName.classList.add('nameText');
         taskName.textContent = newTask.name;
         taskContent.appendChild(taskName);
 
         // display the selected date
         const taskDate = document.createElement('span');
+        taskDate.classList.add('dateText');
         taskDate.textContent = newTask.date ?? '';
         taskContent.appendChild(taskDate);
 
@@ -135,6 +137,7 @@ export const tasks = (() => {
         descriptionDropdown.style.display = 'none'; // Initially hide the dropdown
 
         const descriptionContent = document.createElement('span');
+        descriptionContent.classList.add("descriptionText")
         descriptionContent.textContent = description || 'No description available';
         descriptionDropdown.appendChild(descriptionContent);
         taskItem.appendChild(descriptionDropdown);
@@ -277,25 +280,41 @@ export const tasks = (() => {
         }
     }
 
-    function editTask(currentTask: Task, newName: string, newDescription?:string): void {
+    function editTask(currentTask: Task, newName: string, newImportant: boolean, newDate?: string, newDescription?:string): void {
         const taskIndex = tasksList.indexOf(currentTask);
 
         if (taskIndex !== -1) {
-            // Update the task with the new name and description
+            // Update the task with the new info
             currentTask.name = newName;
+            currentTask.important = newImportant;
+            currentTask.date = newDate;
             currentTask.description = newDescription;
-    
+            
             // Update the task element in the DOM
             const taskElement = document.querySelector(`.myTask[data-task="${taskIndex}"`);
             if (taskElement) {
                 // Update the displayed name
-                const taskNameElement = taskElement.querySelector('span');
+                const taskNameElement = taskElement.querySelector('.nameText');
                 if (taskNameElement) {
                     taskNameElement.textContent = newName;
                 }
+
+                // Update the task importance
+                const taskContentElement = taskElement.querySelector('#taskContent');
+                if (taskContentElement) {
+                    taskContentElement.classList.remove('important-task', 'normal-task');
+                    taskContentElement.classList.add(newImportant ? 'important-task' : 'normal-task');
+                }
+
+                // Update the date
+                const taskDateElement = taskElement.querySelector('.dateText'); // Assuming date is the second child
+                if (taskDateElement) {
+                    taskDateElement.textContent = newDate || '';
+                }
+
     
                 // Update the description dropdown content
-                const descriptionContentElement = taskElement.querySelector('.descriptionDropdown span');
+                const descriptionContentElement = taskElement.querySelector('.descriptionText');
                 if (descriptionContentElement) {
                     descriptionContentElement.textContent = newDescription || 'No description available';
                 }
