@@ -27,6 +27,7 @@ export const modal = (() => {
             const description = (classInfo as Task)?.description ?? '';
             const date = (classInfo as Task)?.date ?? '';
             const important = (classInfo as Task)?.important ?? '';
+            console.log(date)
             
             if (action === 'remove') {
                 return `
@@ -61,11 +62,11 @@ export const modal = (() => {
                         <textarea id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional">${description}</textarea>
             
                         <label for="${contentType}Date">Due Date:</label>
-                        <input type="date" id="${contentType}Date" name="${contentType}Date" value="${date}">
+                        <input type="date" id="${contentType}Date" name="${contentType}Date" value="${convertDate(date, 'yyyy-mm-dd')}">
 
                         <div class="important-checkbox">
                             <label for="${contentType}Important">Important: </label>
-                            <input type="checkbox" id="${contentType}Important" name="${contentType}Important" ${important} ? 'checked' : ''>
+                            <input type="checkbox" id="${contentType}Important" name="${contentType}Important" ${important ? 'checked' : ''}>
                             
                         </div>
             
@@ -85,13 +86,31 @@ export const modal = (() => {
             `;
         }
 
-        
-
         function generateColorSquares(selectedColor: string): string {
             const colors = ['black', 'slategray', 'white', '#ec7e7e', '#ecb67e', '#ece07e', '#95ec7e', '#7ea9ec', '#c57eec', '#ec7eb6'];
             return colors.map(color => `
                 <div class="color-square ${color === selectedColor ? 'selected' : ''}" style="background-color: ${color}" data-color="${color}"></div>
             `).join('');
+        }
+
+        // possibly move to main
+        function convertDate(inputDate: string, toFormat = 'mm-dd-yyyy') {
+            if (inputDate) {
+                // Split the input date into components
+                const dateComponents = inputDate.split('-');
+        
+                // Check the desired output format
+                if (toFormat === 'mm-dd-yyyy') {
+                    // Return the date in 'mm-dd-yyyy' format
+                    return `${dateComponents[1]}-${dateComponents[2]}-${dateComponents[0]}`;
+                } else if (toFormat === 'yyyy-mm-dd') {
+                    // Return the date in 'yyyy-mm-dd' format
+                    return `${dateComponents[2]}-${dateComponents[0]}-${dateComponents[1]}`;
+                }
+            }
+        
+            // Return an empty string if the input date is empty
+            return '';
         }
 
         function handleFormSubmission(event: Event) {
@@ -131,14 +150,14 @@ export const modal = (() => {
         function handleTaskAction(nameInput: HTMLInputElement) {
             // possibly change to let
             const taskDescriptionInput = document.getElementById(`${contentType}Description`) as HTMLInputElement;
-            let taskImportantInput = document.getElementById(`${contentType}Important`) as HTMLInputElement;
-            let taskDateInput = document.getElementById(`${contentType}Date`) as HTMLInputElement;
-            // change the formatting of the date if dateInput contains a date
-            let dateValue = taskDateInput.value ? new Date(taskDateInput.value).toLocaleDateString('en-GB', { day: 'numeric', month: 'numeric', year: 'numeric' }) : '';
+            const taskImportantInput = document.getElementById(`${contentType}Important`) as HTMLInputElement;
+            const taskDateInput = document.getElementById(`${contentType}Date`) as HTMLInputElement;
+            // change the date from yyyy-mm-dd to mm-dd-yyyy
+            const dateValue = convertDate(taskDateInput.value);
 
             if(action === 'edit' && currentClass instanceof Task){
                 console.log('task edit')
-                tasks.editTask(currentClass, nameInput.value, taskDescriptionInput.value)
+                tasks.editTask(currentClass, nameInput.value, taskImportantInput.checked, dateValue, taskDescriptionInput.value)
                 toggleModal();
             } else if (action === 'add') {
                 const selectedCategory = document.querySelector('.myCategories.categorySelected');
