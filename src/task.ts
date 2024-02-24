@@ -13,26 +13,29 @@ export class Task {
 export const tasks = (() => {
     let tasksList: Task[] = [];
 
-    createTask('First', '0', true, '02-20-2024', 'Hello There')
-    createTask('Second', '3', false, '02-21-2024', 'Hello Thre')
-    createTask('Four, fifthcat', '5', false, '02-22-2024', 'five')
-    createTask('Fifth, fifthcat', '5', true, '02-22-2024', 'fivess')
+    addTaskToList('First', '0', true, '02-20-2024', 'Hello There')
+    addTaskToList('Second', '0', false, '02-21-2024', 'Hello There')
+    addTaskToList('Third', '0', true, '02-22-2024', 'Hello There')
+    addTaskToList('Second', '3', false, '02-21-2024', 'Hello Thre')
+    addTaskToList('Four, fifthcat', '5', false, '02-22-2024', 'five')
+    addTaskToList('Fifth, fifthcat', '5', true, '02-22-2024', 'fivess')
+
+    function addTaskToList(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
+        const newTask = new Task(name, categoryIndex!, important, date, description);
+        const taskIndex = tasksList.length;
+        createTask(newTask, taskIndex)
+    }
     
-    function createTask(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
+    function createTask(newTask: Task, taskIndex: number): void {
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
 
-        const newTask = new Task(name, categoryIndex!, important, date, description);
-        const taskIndex = tasksList.length;
-        console.log(important);
-        console.log(date);
-
         // create or retrieve the task container for the selected category
-        const taskContainerId = `taskContainer-${categoryIndex}`;
+        const taskContainerId = `taskContainer-${newTask.categoryIndex}`;
         let taskContainer = document.getElementById(taskContainerId);
 
         if (!taskContainer) {
-            console.log(`creating new task container for category index ${categoryIndex}`)
+            console.log(`creating new task container for category index ${newTask.categoryIndex}`)
             // create new task container only if it doesn't exist
             taskContainer = document.createElement('div');
             taskContainer.id = taskContainerId;
@@ -51,20 +54,20 @@ export const tasks = (() => {
                 });
             });
         } else {
-            console.log(`Using existing task container for category index ${categoryIndex}`);
+            console.log(`Using existing task container for category index ${newTask.categoryIndex}`);
         }
 
         // create new HTML structure for the task
         const taskItem = document.createElement('div');
         taskItem.classList.add("myTask");
         taskItem.setAttribute('data-task', taskIndex.toString());
-        taskItem.setAttribute('assigned-category', categoryIndex!.toString());
+        taskItem.setAttribute('assigned-category', newTask.categoryIndex!.toString());
 
         const taskContent = document.createElement('div');
         taskContent.id = 'taskContent'
 
         // add class for important tasks
-        taskContent.classList.add(important ? 'important-task' : 'normal-task');
+        taskItem.classList.add(newTask.important ? 'important-task' : 'normal-task');
 
         // html structure for checkbox
         // changed to check task when user clicks
@@ -138,7 +141,7 @@ export const tasks = (() => {
 
         const descriptionContent = document.createElement('span');
         descriptionContent.classList.add("descriptionText")
-        descriptionContent.textContent = description || 'No description available';
+        descriptionContent.textContent = newTask.description || 'No description available';
         descriptionDropdown.appendChild(descriptionContent);
         taskItem.appendChild(descriptionDropdown);
         tasksList.push(newTask);
@@ -147,7 +150,7 @@ export const tasks = (() => {
         // append
         taskContainer.appendChild(taskItem);
         // update tasks
-        updateTasks(categoryIndex!)
+        updateTasks(newTask.categoryIndex!)
     }
 
     function handleButtonClick(event: Event) {
@@ -184,14 +187,17 @@ export const tasks = (() => {
                         checkTaskIcon.alt = checkTaskIcon.alt === 'unchecked task icon' ? 'checked task icon' : 'unchecked task icon';
 
                         // change styling
-                        const taskContainer = button.closest('.myTask') as HTMLElement
-                        const taskContainerText = taskContainer?.querySelectorAll('span'); // Change to querySelectorAll when description is added
-                        if(taskContainerText){
-                            taskContainerText.forEach(spanElement => {
+                        const myTask = button.closest('.myTask') as HTMLElement
+                        const myTaskText = myTask?.querySelectorAll('span'); // Change to querySelectorAll when description is added
+                        if(myTaskText){
+                            myTaskText.forEach(spanElement => {
                                 spanElement.style.textDecoration = checkTaskIcon.id === 'checked' ? 'line-through' : 'none';
                             });
                             
-                            taskContainer!.style.backgroundColor = checkTaskIcon.id === 'checked'? 'rgba(0, 0, 0, 0.3)' : 'initial';
+                            myTask!.style.backgroundColor = checkTaskIcon.id === 'checked'? 'rgba(0, 0, 0, 0.3)' : 'initial';
+                            // remove important
+                            taskElement.classList.remove('important-task');
+                            taskElement.classList.add('normal-task');
                         }
                     }
                     
@@ -300,10 +306,9 @@ export const tasks = (() => {
                 }
 
                 // Update the task importance
-                const taskContentElement = taskElement.querySelector('#taskContent');
-                if (taskContentElement) {
-                    taskContentElement.classList.remove('important-task', 'normal-task');
-                    taskContentElement.classList.add(newImportant ? 'important-task' : 'normal-task');
+                if (taskElement) {
+                    taskElement.classList.remove('important-task', 'normal-task');
+                    taskElement.classList.add(newImportant ? 'important-task' : 'normal-task');
                 }
 
                 // Update the date
