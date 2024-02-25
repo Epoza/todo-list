@@ -13,29 +13,32 @@ export class Task {
 export const tasks = (() => {
     let tasksList: Task[] = [];
 
-    addTaskToList('First', '0', true, '02-20-2024', 'Hello There')
-    addTaskToList('Second', '0', false, '02-21-2024', 'Hello There')
-    addTaskToList('Third', '0', true, '02-22-2024', 'Hello There')
-    addTaskToList('Second', '3', false, '02-21-2024', 'Hello Thre')
+    addTaskToList('First', '3', true, '02-20-2024', 'Hello There')
+    addTaskToList('Second', '3', false, '02-21-2024', 'Hello There')
+    addTaskToList('Third', '3', true, '02-22-2024', 'Hello There')
+    addTaskToList('yoyoyo', '4', false, '02-24-2024', 'Hello Thre')
     addTaskToList('Four, fifthcat', '5', false, '02-22-2024', 'five')
-    addTaskToList('Fifth, fifthcat', '5', true, '02-22-2024', 'fivess')
+    addTaskToList('Fifth, fifthcat', '5', true, '02-24-2024', 'fivess')
 
     function addTaskToList(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
         const newTask = new Task(name, categoryIndex!, important, date, description);
-        const taskIndex = tasksList.length;
-        createTask(newTask, taskIndex)
+        
+        createTask(newTask);
+        tasksList.push(newTask);
     }
     
-    function createTask(newTask: Task, taskIndex: number): void {
+    function createTask(newTask: Task, defaultCategory?: string): void {
+        const taskIndex = tasksList.length;
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
+        console.log(taskInfo)
 
         // create or retrieve the task container for the selected category
-        const taskContainerId = `taskContainer-${newTask.categoryIndex}`;
+        const taskContainerId = `taskContainer-${defaultCategory ? defaultCategory: newTask.categoryIndex}`;
         let taskContainer = document.getElementById(taskContainerId);
 
         if (!taskContainer) {
-            console.log(`creating new task container for category index ${newTask.categoryIndex}`)
+            console.log(`creating new task container for category index ${defaultCategory ? defaultCategory: newTask.categoryIndex}`)
             // create new task container only if it doesn't exist
             taskContainer = document.createElement('div');
             taskContainer.id = taskContainerId;
@@ -54,14 +57,14 @@ export const tasks = (() => {
                 });
             });
         } else {
-            console.log(`Using existing task container for category index ${newTask.categoryIndex}`);
+            console.log(`Using existing task container for category index ${defaultCategory ? defaultCategory: newTask.categoryIndex}`);
         }
 
         // create new HTML structure for the task
         const taskItem = document.createElement('div');
         taskItem.classList.add("myTask");
         taskItem.setAttribute('data-task', taskIndex.toString());
-        taskItem.setAttribute('assigned-category', newTask.categoryIndex!.toString());
+        taskItem.setAttribute('assigned-category', defaultCategory ? defaultCategory: newTask.categoryIndex);
 
         const taskContent = document.createElement('div');
         taskContent.id = 'taskContent'
@@ -144,13 +147,40 @@ export const tasks = (() => {
         descriptionContent.textContent = newTask.description || 'No description available';
         descriptionDropdown.appendChild(descriptionContent);
         taskItem.appendChild(descriptionDropdown);
-        tasksList.push(newTask);
         console.log(newTask)
 
         // append
         taskContainer.appendChild(taskItem);
+        
+        // add the tasks to default categories if applicable
+        if (parseInt(defaultCategory ? defaultCategory : newTask.categoryIndex, 10) > 2) {
+            addTaskToDefaultCategory(newTask)
+            console.log('it is in ' + newTask.categoryIndex + defaultCategory)
+        } 
         // update tasks
-        updateTasks(newTask.categoryIndex!)
+        updateTasks(defaultCategory ? defaultCategory: newTask.categoryIndex);
+    }
+
+    function addTaskToDefaultCategory(currentTask: Task) {
+        if (currentTask && currentTask.categoryIndex != '0') {
+            createTask(currentTask, '0');
+        } 
+        if(currentTask.date === getCurrentDate() && currentTask.categoryIndex != '1'){
+            createTask(currentTask, '1')
+            console.log('the current date is ' + getCurrentDate())
+        }
+        if(currentTask.important && currentTask.categoryIndex != '2'){
+            createTask(currentTask, '2');
+        }
+    }
+
+    function getCurrentDate(){
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+    
+        return `${mm}-${dd}-${yyyy}`;
     }
 
     function handleButtonClick(event: Event) {
@@ -388,6 +418,7 @@ export const tasks = (() => {
     }
 
     return {
+        addTaskToList,
         createTask,
         handleButtonClick,
         removeAllTasks,
