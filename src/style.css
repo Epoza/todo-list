@@ -18,7 +18,23 @@
 }
 
 .hasTasks {
- @apply bg-cyan-950 w-6 h-6
+  height: 31px;
+  width: 31px;
+}
+
+/* transition for all svg buttons */
+
+.svgButton {
+  position: relative;
+  overflow: hidden;
+}
+
+.svgButton img {
+  transition: transform 0.3s ease-in-out;
+}
+
+.svgButton:hover img {
+  transform: scale(1.15);
 }
 
 /* -------------------- modal -------------------- */
@@ -113,8 +129,10 @@ button#cancel:hover {
 
 .myCategories {
   padding: 5px;
-  margin: 5px 0px;
+  margin: 8px 0px;
   border: 2px solid black;
+  border-bottom: 3px solid black;
+  border-right: 3px solid black;
   border-radius: 15px;
   display: flex;
   justify-content: space-between;
@@ -138,10 +156,19 @@ span{
 }
 
 .categorySelected {
-  box-shadow: 1.2px 2.4px 2.4px hsl(0deg 0% 0% / 0.46);
+  box-shadow: 1.4px 2.7px 2.7px hsl(0deg 0% 0% / 0.46);
 }
 
 /* -------------Task Styling ------------- */
+#taskHeaderContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; 
+  width: 100%;
+  margin: auto;
+  padding: 0 25px;
+  @apply lg:m-auto lg:w-3/4
+}
 
 #taskCategoryHeader {
   font-size: 30px;
@@ -152,20 +179,24 @@ span{
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  width: 75%; 
-  margin: 10px auto;
+  width: 100%; 
+  padding: 10px; 
+  @apply lg:m-auto lg:w-3/4
 }
 
 .myTask {
   border-radius: 10px;
   margin: 10px;
-  border: 1px solid black;
+  /* change later */
+  border: 2px solid black;
+  border-bottom: 4px solid black;
+  border-right: 4px solid black;
   min-height: 35px;
 }
 
 #taskContent {
-  border-bottom: 1px solid red;
-  border-radius: 10px;
+  /* make border show when description is clicked */
+  /* border-bottom: 3px dotted black; */
   display: flex;
   width: 100%;
   height: 35px;
@@ -176,6 +207,9 @@ span{
 
 .nameText{
   flex-grow: 1;
+}
+#taskContent span{
+ padding: 0 10px;
 }
 
 .important-task {
