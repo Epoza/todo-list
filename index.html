@@ -6,7 +6,7 @@
     <title>ToDo List</title>
   </head>
   <body class="h-full m-0 p-0 font-NotoSans font-normal">
-    <div class="flex">
+    <div class="flex" id="main">
       <div class="p-5 w-72 border-r-2" id="sidebar">
         <div class="flex justify-between border-b-2 pb-2" id="categories-header">
           <span class="large-text font-medium">Categories</span>
@@ -16,6 +16,7 @@
       </div>
 
       <div class="relative h-screen w-screen " id="taskInfo">
+        <button id="toggleButton" onclick="toggleSidebar()">☰ Close Sidebar</button> 
         <div class="p-5" id="todoHeader"><img src="/images/dark_mode.svg" alt="dark mode icon" height="31px" width="31px"></div>
         <div id="taskHeaderContainer">
           <div id="taskCategoryHeader"></div>
@@ -28,5 +29,23 @@
     </div>
 
     <script type="module" src="/src/main.ts"></script>
+    <script>
+      function toggleSidebar() {
+        const sidebar = document.getElementById("sidebar");
+        const toggleButton = document.getElementById("toggleButton");
+
+        if (sidebar.style.display == "none") {
+          // Sidebar is closed, open it
+          sidebar.style.display = "block";
+          sidebar.classList.remove("closed")
+          toggleButton.textContent = "☰ Close Sidebar";
+        } else {
+          // Sidebar is open, close it
+          sidebar.style.display = "none";
+          sidebar.classList.add("closed");
+          toggleButton.textContent = "☰ Open Sidebar";
+        }
+      }
+    </script>
   </body>
 </html>
