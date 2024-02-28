@@ -43,7 +43,8 @@ export const tasks = (() => {
             taskContainer = document.createElement('div');
             taskContainer.id = taskContainerId;
             taskContainer.classList.add('taskContainer')
-            taskInfo?.insertBefore(taskContainer, document.getElementById('task'));
+            const taskElement = document.getElementById('taskHeaderContainer');
+            taskElement?.insertAdjacentElement('afterend', taskContainer);
 
             // Add event listener only when creating a new task container
             taskContainer.addEventListener('click', (event) => {
@@ -75,7 +76,7 @@ export const tasks = (() => {
         // html structure for checkbox
         // changed to check task when user clicks
         const uncheckedTask = document.createElement('div');
-        uncheckedTask.classList.add('svgButton');
+        uncheckedTask.classList.add('svgButton', 'taskButton');
         uncheckedTask.id = 'checkButton';
         const uncheckedTaskIcon = document.createElement('img');
         uncheckedTaskIcon.src = "../images/uncheckedBox.svg";
@@ -90,7 +91,7 @@ export const tasks = (() => {
 
         // Create HTML structure for description
         const descriptionButton = document.createElement('div');
-        descriptionButton.classList.add('svgButton');
+        descriptionButton.classList.add('svgButton', 'taskButton');
         descriptionButton.id = 'descriptionButton';
         const descriptionIcon = document.createElement('img');
         descriptionIcon.src = "../images/description.svg";
@@ -100,7 +101,7 @@ export const tasks = (() => {
 
         // HTML structure for edit and delete
         const taskEdit = document.createElement('div');
-        taskEdit.classList.add('svgButton');
+        taskEdit.classList.add('svgButton', 'taskButton');
         taskEdit.id = 'editButton';
         const taskEditIcon = document.createElement('img');
         taskEditIcon.src = "../images/edit.svg";
@@ -110,10 +111,11 @@ export const tasks = (() => {
 
         // delete button
         const taskRemove = document.createElement('div');
-        taskRemove.classList.add('svgButton');
+        taskRemove.classList.add('svgButton', 'taskButton');
         taskRemove.id = 'removeButton';
         // possibly change to just data-remove
         taskRemove.setAttribute('data-remove-task', taskIndex.toString());
+        
         const taskRemoveIcon = document.createElement('img');
         taskRemoveIcon.src = "../images/remove.svg";
         taskRemoveIcon.alt = 'unchecked task icon';
@@ -192,6 +194,7 @@ export const tasks = (() => {
         const dataIndex = taskElement.getAttribute('data-task');
         const taskIndex = parseInt(dataIndex!, 10);
         const currentTask = tasksList[taskIndex];
+        console.log(currentTask)
                     
         enum ButtonId {
             checkButton = 'checkButton',
@@ -257,25 +260,41 @@ export const tasks = (() => {
 
     function removeTask(currentClass: Task): void {
         const taskIndex = tasksList.indexOf(currentClass);
-        // Remove the task from the tasksList array
+
+        // Remove the task from the tasksList array only once
         tasksList.splice(taskIndex, 1);
+   
+        // Find all tasks with the same data-task attribute value
+        const tasksToRemove = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
+        tasksToRemove.forEach(taskElement => {
+            // Get the task index from the data-task attribute
+            const dataIndex = taskElement.getAttribute('data-task');
+            const taskIndexToRemove = parseInt(dataIndex!, 10);
     
-        // Remove the task element from the DOM
-        const taskElement = document.querySelector(`.myTask[data-task="${taskIndex}"`);
-        taskElement?.remove();
+            // remove each task with the same data-task from the screen
+            taskElement.remove();
     
-        console.log(`Removed task with index ${taskIndex}`);
+            console.log(`Removed task with index ${taskIndexToRemove}`);
+        });
         console.log(tasksList);
     
         // Update data values when removing items
         const taskElements = document.querySelectorAll('.myTask');
-        taskElements.forEach((taskElement, newIndex) => {
-            taskElement.setAttribute('data-task', newIndex.toString());
-    
-            // Update data-remove attribute of the remove button
-            const removeButton = taskElement.querySelector('.svgButton[data-remove-task]');
-            if (removeButton) {
-                removeButton.setAttribute('data-remove-task', newIndex.toString());
+        taskElements.forEach(taskElement => {
+            const dataIndex = taskElement.getAttribute('data-task');
+            const currentIndex = parseInt(dataIndex!, 10);
+
+            // Shift down the tasks with a higher index than the removed task
+            if (currentIndex > taskIndex) {
+                const newIndex = currentIndex - 1;
+                taskElement.setAttribute('data-task', newIndex.toString());
+
+                // Update data-remove attribute of the remove button
+                // possibly remove this code below in the future
+                const removeButton = taskElement.querySelector('.svgButton[data-remove-task]');
+                if (removeButton) {
+                    removeButton.setAttribute('data-remove-task', newIndex.toString());
+                }
             }
         });
         updateTasks(currentClass.categoryIndex.toString())
