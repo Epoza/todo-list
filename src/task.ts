@@ -335,44 +335,41 @@ export const tasks = (() => {
         }
     }
 
-    function editTask(currentTask: Task, newName: string, newImportant: boolean, newDate?: string, newDescription?:string): void {
+    function editTask(currentTask: Task, newName: string, newImportant: boolean, newDate?: string, newDescription?: string): void {
         const taskIndex = tasksList.indexOf(currentTask);
-
+    
         if (taskIndex !== -1) {
             // Update the task with the new info
             currentTask.name = newName;
             currentTask.important = newImportant;
             currentTask.date = newDate;
             currentTask.description = newDescription;
-            
-            // Update the task element in the DOM
-            const taskElement = document.querySelector(`.myTask[data-task="${taskIndex}"`);
-            if (taskElement) {
+    
+            // Find all tasks with the same data-task attribute value
+            const tasksToEdit = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
+            tasksToEdit.forEach(taskElement => {
                 // Update the displayed name
                 const taskNameElement = taskElement.querySelector('.nameText');
                 if (taskNameElement) {
                     taskNameElement.textContent = newName;
                 }
-
+    
                 // Update the task importance
-                if (taskElement) {
-                    taskElement.classList.remove('important-task', 'normal-task');
-                    taskElement.classList.add(newImportant ? 'important-task' : 'normal-task');
-                }
-
+                taskElement.classList.remove('important-task', 'normal-task');
+                taskElement.classList.add(newImportant ? 'important-task' : 'normal-task');
+    
                 // Update the date
-                const taskDateElement = taskElement.querySelector('.dateText'); // Assuming date is the second child
+                const taskDateElement = taskElement.querySelector('.dateText');
                 if (taskDateElement) {
                     taskDateElement.textContent = newDate || '';
                 }
-
     
                 // Update the description dropdown content
                 const descriptionContentElement = taskElement.querySelector('.descriptionText');
                 if (descriptionContentElement) {
                     descriptionContentElement.textContent = newDescription || 'No description available';
                 }
-            }
+            });
     
             console.log(`Edited task with index ${taskIndex}`);
             console.log(tasksList);
