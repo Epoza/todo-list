@@ -2,8 +2,20 @@ import './style.css';
 import { modal } from './modal';
 
 export class Task {
-    constructor(public name: string, public categoryIndex: string, public important: boolean, public date?: string, public description?: string) {
+    name: string;
+    categoryIndex: string;
+    important: boolean;
+    date?: string;
+    description?: string;
+
+    // Properties to track default categories
+    taskInCategory0: boolean = false;
+    taskInCategory1: boolean = false;
+    taskInCategory2: boolean = false;
+
+    constructor(name: string, categoryIndex: string, important: boolean, date?: string, description?: string) {
         this.name = name;
+        this.categoryIndex = categoryIndex;
         this.important = important;
         this.date = date;
         this.description = description;
@@ -22,23 +34,23 @@ export const tasks = (() => {
 
     function addTaskToList(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
         const newTask = new Task(name, categoryIndex!, important, date, description);
-        
-        createTask(newTask);
         tasksList.push(newTask);
+        createTask(newTask);
     }
     
-    function createTask(newTask: Task, defaultCategory?: string): void {
-        const taskIndex = tasksList.length;
+    function createTask(currentTask: Task, defaultCategory?: string): void {
+        
+        const taskIndex = tasksList.indexOf(currentTask);
         // use for taskContainer placement
         const taskInfo = document.getElementById('taskInfo');
         console.log(taskInfo)
 
         // create or retrieve the task container for the selected category
-        const taskContainerId = `taskContainer-${defaultCategory ? defaultCategory: newTask.categoryIndex}`;
+        const taskContainerId = `taskContainer-${defaultCategory ? defaultCategory: currentTask.categoryIndex}`;
         let taskContainer = document.getElementById(taskContainerId);
 
         if (!taskContainer) {
-            console.log(`creating new task container for category index ${defaultCategory ? defaultCategory: newTask.categoryIndex}`)
+            console.log(`creating new task container for category index ${defaultCategory ? defaultCategory: currentTask.categoryIndex}`)
             // create new task container only if it doesn't exist
             taskContainer = document.createElement('div');
             taskContainer.id = taskContainerId;
@@ -58,20 +70,20 @@ export const tasks = (() => {
                 });
             });
         } else {
-            console.log(`Using existing task container for category index ${defaultCategory ? defaultCategory: newTask.categoryIndex}`);
+            console.log(`Using existing task container for category index ${defaultCategory ? defaultCategory: currentTask.categoryIndex}`);
         }
-
+        console.log(taskIndex)
         // create new HTML structure for the task
         const taskItem = document.createElement('div');
         taskItem.classList.add("myTask");
         taskItem.setAttribute('data-task', taskIndex.toString());
-        taskItem.setAttribute('assigned-category', defaultCategory ? defaultCategory: newTask.categoryIndex);
+        taskItem.setAttribute('assigned-category', defaultCategory ? defaultCategory: currentTask.categoryIndex);
 
         const taskContent = document.createElement('div');
         taskContent.id = 'taskContent'
 
         // add class for important tasks
-        taskItem.classList.add(newTask.important ? 'important-task' : 'normal-task');
+        taskItem.classList.add(currentTask.important ? 'important-task' : 'normal-task');
 
         // html structure for checkbox
         // changed to check task when user clicks
@@ -125,13 +137,13 @@ export const tasks = (() => {
         // display the task name
         const taskName = document.createElement('span');
         taskName.classList.add('nameText');
-        taskName.textContent = newTask.name;
+        taskName.textContent = currentTask.name;
         taskContent.appendChild(taskName);
 
         // display the selected date
         const taskDate = document.createElement('span');
         taskDate.classList.add('dateText');
-        taskDate.textContent = newTask.date ?? '';
+        taskDate.textContent = currentTask.date ?? '';
         taskContent.appendChild(taskDate);
 
         // append button container to task
@@ -146,33 +158,65 @@ export const tasks = (() => {
 
         const descriptionContent = document.createElement('span');
         descriptionContent.classList.add("descriptionText")
-        descriptionContent.textContent = newTask.description || 'No description available';
+        descriptionContent.textContent = currentTask.description || 'No description available';
         descriptionDropdown.appendChild(descriptionContent);
         taskItem.appendChild(descriptionDropdown);
-        console.log(newTask)
 
         // append
         taskContainer.appendChild(taskItem);
         
         // add the tasks to default categories if applicable
-        if (parseInt(defaultCategory ? defaultCategory : newTask.categoryIndex, 10) > 2) {
-            addTaskToDefaultCategory(newTask)
-            console.log('it is in ' + newTask.categoryIndex + defaultCategory)
+        if (parseInt(defaultCategory ? defaultCategory : currentTask.categoryIndex, 10) > 2) {
+            addTaskToDefaultCategory(currentTask)
         } 
         // update tasks
-        updateTasks(defaultCategory ? defaultCategory: newTask.categoryIndex);
+        updateTasks(defaultCategory ? defaultCategory: currentTask.categoryIndex);
     }
 
-    function addTaskToDefaultCategory(currentTask: Task) {
-        if (currentTask && currentTask.categoryIndex != '0') {
-            createTask(currentTask, '0');
-        } 
-        if(currentTask.date === getCurrentDate() && currentTask.categoryIndex != '1'){
-            createTask(currentTask, '1')
-            console.log('the current date is ' + getCurrentDate())
+    function addTaskToDefaultCategory(currentTask: Task, edit?: boolean) {
+        console.log(currentTask);
+    
+        // Remove tasks from the specified category based on assigned-category
+        if (edit) {
+            if (currentTask.date !== getCurrentDate() && currentTask.taskInCategory1) {
+                removeTaskFromDefaultCategory(currentTask, '1');
+                currentTask.taskInCategory1 = false;
+            }
+            if (!currentTask.important && currentTask.taskInCategory2) {
+                removeTaskFromDefaultCategory(currentTask, '2');
+                currentTask.taskInCategory2 = false;
+            }
         }
-        if(currentTask.important && currentTask.categoryIndex != '2'){
+    
+        // Add task to default category if it meets criteria
+        if (currentTask && currentTask.categoryIndex !== '0' && !currentTask.taskInCategory0) {
+            createTask(currentTask, '0');
+            currentTask.taskInCategory0 = true;
+        }
+        if (currentTask.date === getCurrentDate() && currentTask.categoryIndex !== '1' && !currentTask.taskInCategory1) {
+            createTask(currentTask, '1');
+            currentTask.taskInCategory1 = true;
+        }
+        if (currentTask.important && currentTask.categoryIndex !== '2' && !currentTask.taskInCategory2) {
             createTask(currentTask, '2');
+            currentTask.taskInCategory2 = true;
+        }
+    
+        updateTasks(currentTask.categoryIndex);
+    }
+
+    function removeTaskFromDefaultCategory(currentTask: Task, categoryIndex: string): void {
+        console.log(categoryIndex);
+        // Remove the task from the specified category based on the task's properties
+        const categoryContainer = document.getElementById(`taskContainer-${categoryIndex}`);
+        console.log(categoryContainer)
+        const taskElement = categoryContainer?.querySelector(`.myTask[data-task="${tasksList.indexOf(currentTask)}"]`);
+        console.log(taskElement)
+        if (taskElement) {
+            console.log('Task removed from that default category');
+            taskElement.remove();
+        } else {
+            console.error('Could not find the task in that category');
         }
     }
 
@@ -249,7 +293,7 @@ export const tasks = (() => {
                     modal.task('edit', currentTask);
                     break;
                 case ButtonId.RemoveButton:
-                    modal.task('remove', currentTask);// pass in newTask
+                    modal.task('remove', currentTask);// pass in currentTask
                     break;
                 // Add more cases for additional buttons
                 default:
@@ -258,8 +302,8 @@ export const tasks = (() => {
         }
     }
 
-    function removeTask(currentClass: Task): void {
-        const taskIndex = tasksList.indexOf(currentClass);
+    function removeTask(currentTask: Task): void {
+        const taskIndex = tasksList.indexOf(currentTask);
 
         // Remove the task from the tasksList array only once
         tasksList.splice(taskIndex, 1);
@@ -297,7 +341,7 @@ export const tasks = (() => {
                 }
             }
         });
-        updateTasks(currentClass.categoryIndex.toString())
+        updateTasks(currentTask.categoryIndex.toString())
     }
     
     function updateTasks(categoryIndex: string): void {
@@ -370,6 +414,7 @@ export const tasks = (() => {
                     descriptionContentElement.textContent = newDescription || 'No description available';
                 }
             });
+            addTaskToDefaultCategory(currentTask, true);
     
             console.log(`Edited task with index ${taskIndex}`);
             console.log(tasksList);
