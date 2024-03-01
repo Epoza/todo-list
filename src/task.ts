@@ -211,6 +211,7 @@ export const tasks = (() => {
         const categoryContainer = document.getElementById(`taskContainer-${categoryIndex}`);
         console.log(categoryContainer)
         const taskElement = categoryContainer?.querySelector(`.myTask[data-task="${tasksList.indexOf(currentTask)}"]`);
+        console.log(tasksList.indexOf(currentTask))
         console.log(taskElement)
         if (taskElement) {
             console.log('Task removed from that default category');
@@ -424,24 +425,18 @@ export const tasks = (() => {
     }
 
     function removeAllTasks(categoryIndex: string, categoryRemoved: boolean) {
-        // Remove all tasks in the specified category
+        // Get the specified tasks in the category
         const tasksToRemove = tasksList.filter(task => task.categoryIndex === categoryIndex);
+        // Iterate over each task and remove it
         tasksToRemove.forEach(taskToRemove => {
-            const taskToRemoveIndex = tasksList.indexOf(taskToRemove);
-            tasksList.splice(taskToRemoveIndex, 1);
-
-            const taskElement = document.querySelector(`.myTask[data-task="${taskToRemoveIndex}"`);
-            taskElement?.remove();
-
-            console.log(`Removed task with index ${taskToRemoveIndex}`);
-            console.log(tasksList);
+            removeTask(taskToRemove)
         });
-
+    
         // Only when removing a category
-        if(categoryRemoved){
+        if (categoryRemoved) {
             // Remove the task container associated with the category
             const taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
-            taskContainer?.remove()
+            taskContainer?.remove();
             // update the other tasks and associated categories
             updateTasksAfterCategoryRemoval(categoryIndex);
         }
@@ -473,6 +468,7 @@ export const tasks = (() => {
         updateTasks(categoryIndex)
     }
 
+
     function checkCategoryForTasks(categoryIndex: string): boolean{
         console.log(tasksList.some(task => task.categoryIndex === categoryIndex))
         return tasksList.some(task => task.categoryIndex === categoryIndex);
@@ -485,8 +481,8 @@ export const tasks = (() => {
         removeAllTasks,
         removeTask,
         updateTasks,
-        checkCategoryForTasks,
         updateTasksAfterCategoryRemoval,
+        checkCategoryForTasks,
         editTask,
     };
 })();
