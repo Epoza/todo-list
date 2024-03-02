@@ -2,8 +2,6 @@ import './style.css'
 import { modal } from "./modal.ts";
 import { tasks } from './task.ts';
 
-const categoryContainer = document.getElementById('categoryContainer');
-
 // handle click events
 document.body.addEventListener('click', (event: MouseEvent) => {
   const target = event.target as HTMLElement;
@@ -27,7 +25,29 @@ document.body.addEventListener('click', (event: MouseEvent) => {
   }
 });
 
+// show/hide sidebar on click
+const toggleSidebarButton = document.getElementById("toggleSidebarButton") as HTMLElement;
+const sidebar = document.getElementById("sidebar") as HTMLElement;
 
+toggleSidebarButton.addEventListener('click', () => {
+  // Check if the sidebar is explicitly set to "none" or if it's visually hidden using a class
+  const isSidebarHidden = sidebar.style.display === "none" || sidebar.classList.contains("closed");
+
+  if (isSidebarHidden) {
+    // Sidebar is closed, open it
+    sidebar.style.display = "block";
+    sidebar.classList.remove("closed");
+    toggleSidebarButton.textContent = "☰ Close Sidebar";
+  } else {
+    // Sidebar is open, close it
+    sidebar.style.display = "none";
+    sidebar.classList.add("closed");
+    toggleSidebarButton.textContent = "☰ Open Sidebar";
+  }
+});
+
+// change category and show the tasks
+const categoryContainer = document.getElementById('categoryContainer');
 let selectedCategory: Element;
 
 categoryContainer?.addEventListener('click', (event: MouseEvent) => {
@@ -63,3 +83,6 @@ const selectedCategoryElement = document.querySelector('.categorySelected') as H
 if (selectedCategoryElement) {
     selectedCategoryElement.click();
 }
+
+
+
