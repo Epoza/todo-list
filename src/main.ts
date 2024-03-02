@@ -25,26 +25,33 @@ document.body.addEventListener('click', (event: MouseEvent) => {
   }
 });
 
-// show/hide sidebar on click
 const toggleSidebarButton = document.getElementById("toggleSidebarButton") as HTMLElement;
 const sidebar = document.getElementById("sidebar") as HTMLElement;
 
-toggleSidebarButton.addEventListener('click', () => {
-  // Check if the sidebar is explicitly set to "none" or if it's visually hidden using a class
-  const isSidebarHidden = sidebar.style.display === "none" || sidebar.classList.contains("closed");
+// pass in click or resize to determine styling
+function toggleSidebar(shouldClose: boolean) {
+  const sidebarButtonIcon = toggleSidebarButton.querySelector('img');
 
-  if (isSidebarHidden) {
-    // Sidebar is closed, open it
-    sidebar.style.display = "block";
-    sidebar.classList.remove("closed");
-    toggleSidebarButton.textContent = "☰ Close Sidebar";
-  } else {
-    // Sidebar is open, close it
-    sidebar.style.display = "none";
-    sidebar.classList.add("closed");
-    toggleSidebarButton.textContent = "☰ Open Sidebar";
-  }
+  sidebar.style.display = shouldClose ? "block" : "none";
+  sidebar.classList.toggle("closed", !shouldClose);
+  sidebarButtonIcon!.src = shouldClose ? "../images/sidebar_close.svg" : "../images/sidebar.svg";
+}
+
+// Add an event listener to toggle the sidebar on button click
+toggleSidebarButton.addEventListener('click', () => {
+    const isClosed = sidebar.style.display === "none" || sidebar.classList.contains("closed");
+    toggleSidebar(isClosed)
 });
+
+// Add a resize event listener to adjust the sidebar based on screen size changes
+window.addEventListener('resize', () => {
+  // Adjust the sidebar based on the window size
+  const windowWidth = window.innerWidth;
+  const shouldCloseSidebar = windowWidth >= 768; // Adjust this threshold based on your requirements
+  toggleSidebar(shouldCloseSidebar);
+});
+
+
 
 // change category and show the tasks
 const categoryContainer = document.getElementById('categoryContainer');
