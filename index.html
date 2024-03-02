@@ -16,7 +16,7 @@
       </div>
 
       <div class="relative h-screen w-screen " id="taskInfo">
-        <button id="toggleButton" onclick="toggleSidebar()">☰ Close Sidebar</button> 
+        <button id="toggleSidebarButton"><img src="/images/sidebar_close.svg" alt="sidebar close" height="31px" width="31px"></button> 
         <div class="p-5" id="todoHeader"><img src="/images/dark_mode.svg" alt="dark mode icon" height="31px" width="31px"></div>
         <div id="taskHeaderContainer">
           <div id="taskCategoryHeader"></div>
@@ -29,23 +29,5 @@
     </div>
 
     <script type="module" src="/src/main.ts"></script>
-    <script>
-      function toggleSidebar() {
-        const sidebar = document.getElementById("sidebar");
-        const toggleButton = document.getElementById("toggleButton");
-
-        if (sidebar.style.display == "none") {
-          // Sidebar is closed, open it
-          sidebar.style.display = "block";
-          sidebar.classList.remove("closed")
-          toggleButton.textContent = "☰ Close Sidebar";
-        } else {
-          // Sidebar is open, close it
-          sidebar.style.display = "none";
-          sidebar.classList.add("closed");
-          toggleButton.textContent = "☰ Open Sidebar";
-        }
-      }
-    </script>
   </body>
 </html>
