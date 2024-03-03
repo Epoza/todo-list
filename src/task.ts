@@ -60,14 +60,7 @@ export const tasks = (() => {
 
             // Add event listener only when creating a new task container
             taskContainer.addEventListener('click', (event) => {
-                const clickedTaskContainer = event.currentTarget as HTMLElement;
-                const updatedCategoryIndex = clickedTaskContainer.id.split('-')[1];
                 handleButtonClick(event);
-            
-                // Pass the updated categoryIndex to updateTasks
-                requestAnimationFrame(() => {
-                    updateTasks(updatedCategoryIndex);
-                });
             });
         } else {
             console.log(`Using existing task container for category index ${defaultCategory ? defaultCategory: currentTask.categoryIndex}`);
@@ -110,29 +103,42 @@ export const tasks = (() => {
         descriptionIcon.alt = 'description dropdown icon';
         descriptionButton.appendChild(descriptionIcon);
         taskSvgButtonContainer.appendChild(descriptionButton)
-
-        // HTML structure for edit and delete
-        const taskEdit = document.createElement('div');
-        taskEdit.classList.add('svgButton', 'taskButton');
-        taskEdit.id = 'editButton';
-        const taskEditIcon = document.createElement('img');
-        taskEditIcon.src = "../images/edit.svg";
-        taskEditIcon.alt = 'edit task icon';
-        taskEdit.appendChild(taskEditIcon);
-        taskSvgButtonContainer.appendChild(taskEdit);
-
-        // delete button
-        const taskRemove = document.createElement('div');
-        taskRemove.classList.add('svgButton', 'taskButton');
-        taskRemove.id = 'removeButton';
-        // possibly change to just data-remove
-        taskRemove.setAttribute('data-remove-task', taskIndex.toString());
         
-        const taskRemoveIcon = document.createElement('img');
-        taskRemoveIcon.src = "../images/remove.svg";
-        taskRemoveIcon.alt = 'unchecked task icon';
-        taskRemove.appendChild(taskRemoveIcon);
-        taskSvgButtonContainer.appendChild(taskRemove);
+        if(!defaultCategory){
+            // HTML structure for edit and delete
+            const taskEdit = document.createElement('div');
+            taskEdit.classList.add('svgButton', 'taskButton');
+            taskEdit.id = 'editButton';
+            const taskEditIcon = document.createElement('img');
+            taskEditIcon.src = "../images/edit.svg";
+            taskEditIcon.alt = 'edit task icon';
+            taskEdit.appendChild(taskEditIcon);
+            taskSvgButtonContainer.appendChild(taskEdit);
+
+            // delete button
+            const taskRemove = document.createElement('div');
+            taskRemove.classList.add('svgButton', 'taskButton');
+            taskRemove.id = 'removeButton';
+            // possibly change to just data-remove
+            taskRemove.setAttribute('data-remove-task', taskIndex.toString());
+            
+            const taskRemoveIcon = document.createElement('img');
+            taskRemoveIcon.src = "../images/remove.svg";
+            taskRemoveIcon.alt = 'unchecked task icon';
+            taskRemove.appendChild(taskRemoveIcon);
+            taskSvgButtonContainer.appendChild(taskRemove);
+        } else {
+            // goes to category of main task
+            const mainCategoryButton = document.createElement('div');
+            mainCategoryButton.classList.add('svgButton', 'taskButton');
+            mainCategoryButton.id = 'mainCategoryButton';
+            const mainCategoryIcon = document.createElement('img');
+            mainCategoryIcon.src = "../images/main_category.svg";
+            mainCategoryIcon.alt = 'main category icon';
+            mainCategoryButton.appendChild(mainCategoryIcon);
+            taskSvgButtonContainer.appendChild(mainCategoryButton)
+        }
+        
 
         // display the task name
         const taskName = document.createElement('span');
@@ -245,7 +251,8 @@ export const tasks = (() => {
             checkButton = 'checkButton',
             DescriptionButton = 'descriptionButton',
             EditButton = 'editButton',
-            RemoveButton = 'removeButton'
+            RemoveButton = 'removeButton',
+            mainCategoryButton = 'mainCategoryButton'
         }
 
         if (button) {
@@ -294,6 +301,15 @@ export const tasks = (() => {
                     const descriptionDropdown = taskContainer.querySelector('.descriptionDropdown') as HTMLElement;
                     if (descriptionDropdown) {
                         descriptionDropdown.style.display = descriptionDropdown.style.display === 'none' ? 'block' : 'none';
+                    }
+                    break;
+                case ButtonId.mainCategoryButton:
+                    // Go to the categoryIndex of the task
+                    console.log('clicked maincategory button')
+                    const firstCategoryElement = document.querySelector(`.myCategories[data-category="${currentTask.categoryIndex}"]`) as HTMLElement;
+                    if (firstCategoryElement) {
+                        firstCategoryElement.click();
+                        updateTasks(currentTask.categoryIndex)
                     }
                     break;
                 case ButtonId.EditButton:
