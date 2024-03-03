@@ -254,7 +254,7 @@ export const tasks = (() => {
             switch (buttonId) {
                 case ButtonId.checkButton:
                     // toggle between unchecked and checked
-                    const checkTaskIcon = button.querySelector('img');
+                    const checkTaskIcon = button.querySelector('img') as HTMLImageElement;
                     if (checkTaskIcon) {
                         const currentIcon = checkTaskIcon.src;
                         const toggleIcon = currentIcon.includes('uncheckedBox.svg')
@@ -264,21 +264,29 @@ export const tasks = (() => {
                         checkTaskIcon.id = checkTaskIcon.id === 'unchecked' ? 'checked' : 'unchecked';
                         checkTaskIcon.alt = checkTaskIcon.alt === 'unchecked task icon' ? 'checked task icon' : 'unchecked task icon';
 
-                        // change styling
-                        const myTask = button.closest('.myTask') as HTMLElement
-                        const myTaskText = myTask?.querySelectorAll('span'); // Change to querySelectorAll when description is added
-                        if(myTaskText){
-                            myTaskText.forEach(spanElement => {
-                                spanElement.style.textDecoration = checkTaskIcon.id === 'checked' ? 'line-through' : 'none';
+                        // Change styling for all tasks with the same data-task
+                        const dataTask = checkTaskIcon.closest('.myTask')?.getAttribute('data-task');
+                        if (dataTask) {
+                            const tasksWithSameDataTask = document.querySelectorAll(`.myTask[data-task="${dataTask}"]`);
+                            tasksWithSameDataTask.forEach(taskElement => {
+                                const taskText = taskElement?.querySelectorAll('span');
+                                if (taskText) {
+                                    taskText.forEach(spanElement => {
+                                        spanElement.style.textDecoration = checkTaskIcon.id === 'checked' ? 'line-through' : 'currentColor';
+                                    });
+                                    // set the new taskIcon
+                                    const taskIcon = taskElement.querySelector('img') as HTMLImageElement;
+                                    if (taskIcon) {
+                                        taskIcon.src = toggleIcon;
+                                        taskIcon.id = checkTaskIcon.id;
+                                        taskIcon.alt = checkTaskIcon.alt;
+                                    }
+
+                                    (taskElement as HTMLElement).style.backgroundColor = checkTaskIcon.id === 'checked' ? 'rgba(0, 0, 0, 0.3)' : '';
+                                }
                             });
-                            
-                            myTask!.style.backgroundColor = checkTaskIcon.id === 'checked'? 'rgba(0, 0, 0, 0.3)' : 'initial';
-                            // remove important
-                            taskElement.classList.remove('important-task');
-                            taskElement.classList.add('normal-task');
                         }
                     }
-                    
                     break;
                 case ButtonId.DescriptionButton:
                     // Toggle the display of the description dropdown
@@ -290,13 +298,11 @@ export const tasks = (() => {
                     break;
                 case ButtonId.EditButton:
                     // go to editTask
-                    console.log('Edit task');
                     modal.task('edit', currentTask);
                     break;
                 case ButtonId.RemoveButton:
                     modal.task('remove', currentTask);// pass in currentTask
                     break;
-                // Add more cases for additional buttons
                 default:
                     break;
             }
