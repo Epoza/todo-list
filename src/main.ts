@@ -68,6 +68,7 @@ categoryContainer?.addEventListener('click', (event: MouseEvent) => {
     selectedCategory?.classList.remove('categorySelected');
     categoryElement.classList.add('categorySelected');
     selectedCategory = categoryElement;
+    
     // update category header in the task section
     const categoryName = categoryElement.querySelector('span')?.textContent;
     // display the text on the screen
@@ -77,11 +78,14 @@ categoryContainer?.addEventListener('click', (event: MouseEvent) => {
 
     // test for click
     const categoryIndex = categoryElement.getAttribute('data-category');
-    console.log('Clicked category', categoryIndex);
     if(categoryIndex){
+      //remove the add task button from default categories other than All
+      toggleAddTaskButton(categoryIndex)
       // checks to see what tasks to show based on category selected
       tasks.updateTasks(categoryIndex)
+      
     }
+
     
   }
 });
@@ -91,5 +95,11 @@ if (selectedCategoryElement) {
     selectedCategoryElement.click();
 }
 
-
-
+function toggleAddTaskButton(categoryIndex: string){
+  const addTaskButton = document.getElementById('task');
+  if(categoryIndex === '1' || categoryIndex === '2'){
+      addTaskButton!.style.display = 'none';
+  } else{
+    addTaskButton!.style.display = 'block';
+  }
+}
