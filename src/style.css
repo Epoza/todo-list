@@ -159,7 +159,8 @@ span{
   box-shadow: 1.4px 2.7px 2.7px hsl(0deg 0% 0% / 0.46);
 }
 
-/* -------------Task Styling ------------- */
+/* ------------- Task Styling ------------- */
+
 #taskHeaderContainer {
   display: flex;
   justify-content: space-between;
@@ -167,7 +168,7 @@ span{
   width: 100%;
   margin: auto;
   padding: 0 25px;
-  @apply lg:m-auto lg:w-3/4
+  
 }
 
 #taskCategoryHeader {
@@ -181,7 +182,7 @@ span{
   flex-direction: column;
   width: 100%; 
   padding: 10px; 
-  @apply lg:m-auto lg:w-3/4
+
 }
 
 .myTask {
@@ -214,4 +215,8 @@ span{
 
 .important-task {
   background-color: rgb(255, 254, 234);
+}
+
+#taskHeaderContainer, .taskContainer {
+  @apply lg:m-auto lg:w-3/4
 }
