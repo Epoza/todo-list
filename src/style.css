@@ -12,18 +12,7 @@
   @apply cursor-pointer
 }
 
-/* Change svg add task button if there are tasks */
-.noTasks {
- @apply absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2
-}
-
-.hasTasks {
-  height: 31px;
-  width: 31px;
-}
-
 /* transition for all svg buttons */
-
 .svgButton {
   position: relative;
   overflow: hidden;
@@ -168,7 +157,6 @@ span{
   width: 100%;
   margin: auto;
   padding: 0 25px;
-  
 }
 
 #taskCategoryHeader {
@@ -182,7 +170,6 @@ span{
   flex-direction: column;
   width: 100%; 
   padding: 10px; 
-
 }
 
 .myTask {
