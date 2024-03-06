@@ -8,7 +8,7 @@
   <body class="h-full m-0 p-0 font-NotoSans font-normal">
     <div class="flex" id="main">
       
-      <div class="p-5 w-72 border-r-2" id="sidebar">
+      <div class="p-5 w-72 border-r-2 shadow-lg" id="sidebar">
         <div class="flex justify-between border-b-2 pb-2" id="categories-header">
           <span class="large-text font-medium">Categories</span>
           <div class="svgButton showModal" style="width: 31px; height: 31px;" id="category"><img src="/images/add_box.svg" alt="add new category icon" style="width: 100%; height: 100%;"></div>
@@ -17,15 +17,16 @@
       </div>
 
       <div class="relative h-screen w-screen " id="taskInfo">
-        <div class="p-5 border-b-2 flex justify-between bg-slate-100 shadow-lg mb-8" id="todoHeader">
+        <div class="p-5 border-b-2 flex justify-between shadow-lg mb-8" id="todoHeader">
           <button id="toggleSidebarButton"><img src="/images/sidebar_close.svg" alt="sidebar close" height="31px" width="31px"></button>
-          <div class="text-4xl font-bold" id="headerName">ToDo List</div> 
+          <div class="text-4xl" id="headerName">ToDo List</div> 
           <button id="toggleModeButton"><img src="/images/dark_mode.svg" alt="dark mode icon" height="31px" width="31px"></button>
         </div>
         <div id="taskHeaderContainer">
           <div id="taskCategoryHeader"></div>
-          <div class="svgButton showModal noTasks" id="task"><img src="/images/add_box.svg" alt="add new task icon" width="60px" height="60px"></div>
+          <div class="svgButton showModal" id="task"><img src="/images/add_box.svg" alt="add new task icon" width="31px" height="31px"></div>
         </div>
+        <div class="mt-10 text-center" id="addTaskMessage">click "+" on the upper right to add a task</div>
       </div>
     </div>
 
