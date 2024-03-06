@@ -390,15 +390,20 @@ export const tasks = (() => {
         // Change the add task button styling
         let taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
 
-        const addSvgButton = document.getElementById('task');
+        // hide/show task message when there are no tasks
+        const addTaskMessage = document.getElementById('addTaskMessage');
+
+        // Check if tasks exist
         if (tasksList.length > 0 && taskContainer) {
-            if (addSvgButton) {
-                addSvgButton.classList.remove("noTasks");
-                addSvgButton.classList.add('hasTasks');
+            // Tasks exist, show tasks
+            if (addTaskMessage) {
+                addTaskMessage.style.display = "none";
             }
         } else {
-            addSvgButton!.classList.add("noTasks");
-            addSvgButton!.classList.remove('hasTasks');
+            // No tasks, show a message
+            if (addTaskMessage) {
+                addTaskMessage.style.display = "block";
+            }
         }
     }
 
