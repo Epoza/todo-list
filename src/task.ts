@@ -60,7 +60,11 @@ export const tasks = (() => {
 
             // Add event listener only when creating a new task container
             taskContainer.addEventListener('click', (event) => {
-                handleButtonClick(event);
+                // Check if the clicked element is meant to be clicked
+                const target = event.target as HTMLElement;
+                if (target.classList.contains('taskButtonClick')) {
+                    handleButtonClick(event);
+                }
             });
         } else {
             console.log(`Using existing task container for category index ${defaultCategory ? defaultCategory: currentTask.categoryIndex}`);
@@ -84,6 +88,7 @@ export const tasks = (() => {
         uncheckedTask.classList.add('svgButton', 'taskButton');
         uncheckedTask.id = 'checkButton';
         const uncheckedTaskIcon = document.createElement('img');
+        uncheckedTaskIcon.classList.add("taskButtonClick");
         uncheckedTaskIcon.src = "../images/uncheckedBox.svg";
         uncheckedTaskIcon.alt = 'unchecked task icon';
         uncheckedTaskIcon.id = 'unchecked';
@@ -99,6 +104,7 @@ export const tasks = (() => {
         descriptionButton.classList.add('svgButton', 'taskButton');
         descriptionButton.id = 'descriptionButton';
         const descriptionIcon = document.createElement('img');
+        descriptionIcon.classList.add("taskButtonClick");
         descriptionIcon.src = "../images/description.svg";
         descriptionIcon.alt = 'description dropdown icon';
         descriptionButton.appendChild(descriptionIcon);
@@ -110,6 +116,7 @@ export const tasks = (() => {
             taskEdit.classList.add('svgButton', 'taskButton');
             taskEdit.id = 'editButton';
             const taskEditIcon = document.createElement('img');
+            taskEditIcon.classList.add("taskButtonClick");
             taskEditIcon.src = "../images/edit.svg";
             taskEditIcon.alt = 'edit task icon';
             taskEdit.appendChild(taskEditIcon);
@@ -123,6 +130,7 @@ export const tasks = (() => {
             taskRemove.setAttribute('data-remove-task', taskIndex.toString());
             
             const taskRemoveIcon = document.createElement('img');
+            taskRemoveIcon.classList.add("taskButtonClick");
             taskRemoveIcon.src = "../images/remove.svg";
             taskRemoveIcon.alt = 'unchecked task icon';
             taskRemove.appendChild(taskRemoveIcon);
@@ -133,6 +141,7 @@ export const tasks = (() => {
             mainCategoryButton.classList.add('svgButton', 'taskButton');
             mainCategoryButton.id = 'mainCategoryButton';
             const mainCategoryIcon = document.createElement('img');
+            mainCategoryIcon.classList.add("taskButtonClick");
             mainCategoryIcon.src = "../images/main_category.svg";
             mainCategoryIcon.alt = 'main category icon';
             mainCategoryButton.appendChild(mainCategoryIcon);
@@ -391,8 +400,7 @@ export const tasks = (() => {
         let taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
 
         // hide/show task message when there are no tasks
-        const addTaskMessage = document.getElementById('addTaskMessage');
-
+        const addTaskMessage = document.getElementById('addTaskMessage'); 
         // Check if tasks exist
         if (tasksList.length > 0 && taskContainer) {
             // Tasks exist, show tasks
