@@ -25,6 +25,54 @@ document.body.addEventListener('click', (event: MouseEvent) => {
   }
 });
 
+// light/dark mode
+const moonIcon = document.querySelector('.moon') as HTMLElement;
+const sunIcon = document.querySelector('.sun') as HTMLElement;
+
+const userTheme = localStorage.getItem('theme');
+const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+// toggle light/dark mode
+const themeToggle = () => {
+  moonIcon.classList.toggle('display-none');
+  sunIcon.classList.toggle('display-none');
+}
+
+// initial theme check
+const themeCheck = () => {
+  if (userTheme === 'dark' || (!userTheme && systemTheme)){
+    document.documentElement.classList.add('dark');
+    moonIcon.classList.add('display-none');
+    return;
+  }
+  sunIcon.classList.add('display-none');
+}
+
+// manual theme check
+const themeSwitch = () => {
+  if(document.documentElement.classList.contains('dark')){
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+    themeToggle();
+    return;
+  }
+  document.documentElement.classList.add('dark');
+  localStorage.setItem('theme', 'dark');
+  themeToggle();
+}
+
+// switch theme on button click
+moonIcon.addEventListener('click', () => {
+  themeSwitch();
+});
+
+sunIcon.addEventListener('click', () => {
+  themeSwitch();
+});
+
+// check theme on initial load
+themeCheck();
+
 const toggleSidebarButton = document.getElementById("toggleSidebarButton") as HTMLElement;
 const sidebar = document.getElementById("sidebar") as HTMLElement;
 
