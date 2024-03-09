@@ -1,6 +1,6 @@
 import './style.css';
 import { modal } from './modal';
-import { Task, tasks } from './task';
+import { tasks } from './task';
 
 export class Category {
     constructor(public name: string, public color: string) {
@@ -14,9 +14,9 @@ export const categories = (() => {
     
     // easily insert default SVG's 
     const defaultCategoryMappings = [
-        { className: 'svgAll', iconSrc: '../images/all.svg', alt: 'all category icon' },
-        { className: 'svgToday', iconSrc: '../images/today.svg', alt: 'today category icon' },
-        { className: 'svgImportant', iconSrc: '../images/important.svg', alt: 'important category icon' },
+        { className: 'svgAll', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-440 160-640v400h360v80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200L480-440Zm0-80 320-200H160l320 200ZM760-40l-56-56 63-64H600v-80h167l-64-64 57-56 160 160L760-40ZM160-640v440-240 3-283 80Z"/></svg>' },
+        { className: 'svgToday', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M360-300q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>'},
+        { className: 'svgImportant', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z"/></svg>' },
     ];
 
     // Default categories
@@ -26,6 +26,7 @@ export const categories = (() => {
     createCategory('Test', 'white', false)
     createCategory('Four', 'white', false)
     createCategory('Five', 'white', false)
+    createCategory('No tasks', 'aliceblue', false)
     
 
     function createCategory(name: string, color: string, defaultCategory?: boolean): void {
@@ -41,16 +42,14 @@ export const categories = (() => {
         
         // check for default category
         if (defaultCategory && categoryIndex < defaultCategoryMappings.length) {
-            const { className, iconSrc, alt } = defaultCategoryMappings[categoryIndex];
+            const { className, svg} = defaultCategoryMappings[categoryIndex];
             
             // insert the default category svg
             categoryItem.classList.add('defaultCategory')
             const categoryDefaultSvg = document.createElement('div');
             categoryDefaultSvg.classList.add(className);
-            const defaultIcon = document.createElement('img');
-            defaultIcon.src = iconSrc;
-            defaultIcon.alt = alt;
-            categoryDefaultSvg.appendChild(defaultIcon);
+            categoryDefaultSvg.innerHTML = svg;
+
             categoryItem.appendChild(categoryDefaultSvg);
 
             // set the first category to the selected category
