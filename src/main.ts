@@ -73,31 +73,39 @@ sunIcon.addEventListener('click', () => {
 // check theme on initial load
 themeCheck();
 
+// show/hide sidebar and toggle svg
 const toggleSidebarButton = document.getElementById("toggleSidebarButton") as HTMLElement;
 const sidebar = document.getElementById("sidebar") as HTMLElement;
 
-// pass in click or resize to determine styling
+// pass in click
 function toggleSidebar(shouldClose: boolean) {
-  const sidebarButtonIcon = toggleSidebarButton.querySelector('img');
+  const sidebarButtonOpen = toggleSidebarButton.querySelector('.sidebarOpen') as HTMLElement;
+  const sidebarButtonClose = toggleSidebarButton.querySelector('.sidebarClose') as HTMLElement;
 
   sidebar.style.display = shouldClose ? "block" : "none";
   sidebar.classList.toggle("closed", !shouldClose);
-  sidebarButtonIcon!.src = shouldClose ? "../images/sidebar_close.svg" : "../images/sidebar.svg";
+
+  // Toggle between classes based on open/close state
+  sidebarButtonOpen.style.display = shouldClose ? "none" : "block";
+  sidebarButtonClose.style.display = shouldClose ? "block" : "none";
 }
 
-// Add an event listener to toggle the sidebar on button click
+// Set initial state based on window size
+toggleSidebar(window.innerWidth >= 768);
+
+// Toggle the sidebar on button click
 toggleSidebarButton.addEventListener('click', () => {
     const isClosed = sidebar.style.display === "none" || sidebar.classList.contains("closed");
-    toggleSidebar(isClosed)
+    toggleSidebar(isClosed);
 });
 
-// Add a resize event listener to adjust the sidebar based on screen size changes
 window.addEventListener('resize', () => {
   // Adjust the sidebar based on the window size
   const windowWidth = window.innerWidth;
-  const shouldCloseSidebar = windowWidth >= 768; // Adjust this threshold based on your requirements
-  toggleSidebar(shouldCloseSidebar);
+  const shouldCloseSidebar = windowWidth < 768; 
+  toggleSidebar(!shouldCloseSidebar);
 });
+
 
 
 
