@@ -4,6 +4,34 @@
 @tailwind components;
 @tailwind utilities;
 
+.toggleBackground {
+  @apply bg-light-background dark:bg-dark-background
+}
+
+.toggleForeground {
+  @apply bg-light-foreground dark:bg-dark-foreground
+}
+
+.toggleMainText {
+  @apply text-light-mainText dark:text-dark-mainText
+}
+
+.toggleSubText {
+  @apply text-light-subText dark:text-dark-subText
+}
+
+.toggleBorder {
+  @apply border-light-border dark:border-dark-border
+}
+
+.toggleIcon {
+  @apply fill-light-icon dark:fill-dark-icon;
+}
+
+.display-none {
+  @apply hidden;
+}
+
 .large-text {
   @apply text-lg
 }
@@ -18,12 +46,13 @@
   overflow: hidden;
 }
 
-.svgButton img {
+.svgButton svg, .svgButton img {
   transition: transform 0.3s ease-in-out;
+  /* vertical-align: text-bottom; */
 }
 
-.svgButton:hover img {
-  transform: scale(1.15);
+.svgButton:hover svg, .svgButton:hover img {
+  transform: scale(1.1);
 }
 
 /* -------------------- modal -------------------- */
@@ -119,9 +148,9 @@ button#cancel:hover {
 .myCategories {
   padding: 5px;
   margin: 8px 0px;
-  border: 2px solid black;
-  border-bottom: 3px solid black;
-  border-right: 3px solid black;
+  border: 2px solid;
+  border-bottom: 3px solid;
+  border-right: 3px solid;
   border-radius: 15px;
   display: flex;
   justify-content: space-between;
