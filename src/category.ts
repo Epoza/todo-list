@@ -3,9 +3,13 @@ import { modal } from './modal';
 import { tasks } from './task';
 
 export class Category {
-    constructor(public name: string, public color: string) {
+    name: string;
+    color: string;
+    defaultCategory?: boolean;
+    constructor(name: string, color: string, defaultCategory?: boolean) {
         this.name = name;
         this.color = color;
+        this.defaultCategory = defaultCategory;
     }
 }
 
@@ -19,29 +23,42 @@ export const categories = (() => {
         { className: 'svgImportant', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z"/></svg>' },
     ];
 
-    // Default categories
-    createCategory('All', '#eaeaea', true);
-    createCategory('Today', '#ffe6e2', true);
-    createCategory('Important', '#fffeea', true);
-    createCategory('Test', 'white', false)
-    createCategory('Four', 'white', false)
-    createCategory('Five', 'white', false)
-    createCategory('No tasks', 'aliceblue', false)
-    
+    // Check if categoriesList exists in localStorage and retrieve it
+    const storedCategories = localStorage.getItem('categoriesList');
+    if (storedCategories) {
+        categoriesList = JSON.parse(storedCategories);
+        retrieveCategoriesList();
+    } else {
+        // If categoriesList doesn't exist in localStorage, create default categories
+        addDefaultCategories()
+    }
 
-    function createCategory(name: string, color: string, defaultCategory?: boolean): void {
-        const newCategory = new Category(name, color);
+    function addDefaultCategories(): void {
+        addCategoryToList('All', '#eaeaea', true);
+        addCategoryToList('Today', '#ffe6e2', true);
+        addCategoryToList('Important', '#fffeea', true);
+    }
+
+    function addCategoryToList(name: string, color: string, defaultCategory = false): void {
+        // add the new category to the list
+        const newCategory = new Category(name, color, defaultCategory);
+        categoriesList.push(newCategory);
+        createCategory(newCategory);
+        saveCategoriesList();
+    }
+
+    function createCategory(currentCategory: Category): void {
         const categoryListContainer = document.getElementById('categoryContainer');
 
         // create new HTML structure
         const categoryIndex = categoriesList.length;
         const categoryItem = document.createElement('div');
         categoryItem.classList.add("myCategories");
-        categoryItem.style.backgroundColor = `${color}`
+        categoryItem.style.backgroundColor = `${currentCategory.color}`
         categoryItem.setAttribute('data-category', categoryIndex.toString());
         
         // check for default category
-        if (defaultCategory && categoryIndex < defaultCategoryMappings.length) {
+        if (currentCategory.defaultCategory && categoryIndex < defaultCategoryMappings.length) {
             const { className, svg} = defaultCategoryMappings[categoryIndex];
             
             // insert the default category svg
@@ -60,10 +77,10 @@ export const categories = (() => {
 
         // display the category name
         const categoryName = document.createElement('span');
-        categoryName.textContent = newCategory.name;
+        categoryName.textContent = currentCategory.name;
         categoryItem.appendChild(categoryName);
 
-        if(!defaultCategory){
+        if(!currentCategory.defaultCategory){
             // holds the svg buttons
             const svgButtonContainer = document.createElement('div');
             svgButtonContainer.classList.add('svgButtonContainer');
@@ -89,24 +106,24 @@ export const categories = (() => {
             categoryRemove.addEventListener('click', (event) => {
                 // Prevent the click event from propagating to the parent elements
                 event.stopPropagation();
-                modal.category('remove', newCategory)
+                modal.category('remove', currentCategory)
             });
             svgButtonContainer.appendChild(categoryRemove);
 
             categoryItem.appendChild(svgButtonContainer);
 
             // Add click event listener to the edit button
-            categoryEdit.addEventListener('click', () => modal.category('edit', newCategory));
+            categoryEdit.addEventListener('click', () => modal.category('edit', currentCategory));
         }
         categoryListContainer?.appendChild(categoryItem);
-        categoriesList.push(newCategory);
 
         // triggers click event on the new category
-        if(newCategory && categoryIndex > 2){
+        if(currentCategory && categoryIndex > 2){
             categoryItem.click();
         }
 
         updateCategories();
+        //saveCategoriesList();
     }
 
     function removeCategory(currentCategory: Category): void {
@@ -139,10 +156,10 @@ export const categories = (() => {
             }
 
             updateCategories();
+            saveCategoriesList();
         }
         console.log(categoriesList)
     }
-
 
     function updateCategories(): void {
         const categoryElements = document.querySelectorAll('.myCategories');
@@ -179,19 +196,26 @@ export const categories = (() => {
                 // update the screen
                 categoryItem.click();
             }
+            //saveCategoriesList();
         }
-        
     }
     
-    function retrieveCategoriesList(): Category[] {
-        return categoriesList;
+    function retrieveCategoriesList(): void {
+        // Iterate through the categories list and create DOM elements to display them
+        categoriesList.forEach((currentCategory) => {
+            createCategory(currentCategory);
+        });
+    }
+
+    function saveCategoriesList(): void {
+        localStorage.setItem('categoriesList', JSON.stringify(categoriesList));
     }
 
     return {
+        addCategoryToList,
         createCategory,
         removeCategory,
         updateCategories,
         editCategory,
-        retrieveCategoriesList
     };
 })();
