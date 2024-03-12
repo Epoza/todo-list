@@ -26,13 +26,13 @@ export const categories = (() => {
     // Check if categoriesList exists in localStorage and retrieve it
     const storedCategories = localStorage.getItem('categoriesList');
     if (storedCategories) {
-        categoriesList = JSON.parse(storedCategories);
-        retrieveCategoriesList();
+        retrieveCategoriesList();        
     } else {
         // If categoriesList doesn't exist in localStorage, create default categories
         addDefaultCategories()
     }
-
+    
+    // Function to add default categories
     function addDefaultCategories(): void {
         addCategoryToList('All', '#eaeaea', true);
         addCategoryToList('Today', '#ffe6e2', true);
@@ -48,6 +48,7 @@ export const categories = (() => {
     }
 
     function createCategory(currentCategory: Category): void {
+        console.log(currentCategory)
         const categoryListContainer = document.getElementById('categoryContainer');
 
         // create new HTML structure
@@ -129,6 +130,9 @@ export const categories = (() => {
     function removeCategory(currentCategory: Category): void {
         // Find the index of the current category in the categoriesList array
         const index = categoriesList.indexOf(currentCategory);
+        console.log(currentCategory)
+        console.log(categoriesList)
+        console.log(index)
 
         if (index !== -1) {
             console.log('removed category index: ' + index);
@@ -175,19 +179,19 @@ export const categories = (() => {
         });
     }
 
-    function editCategory(category: Category, newCategoryName: string, newCategoryColor: string): void {
+    function editCategory(currentCategory: Category, newCategoryName: string, newCategoryColor: string): void {
         console.log(categoriesList)
 
         // find the categoryItem using the unique identifier (data-category)
-        const dataIndex = categoriesList.indexOf(category);
+        const index = categoriesList.indexOf(currentCategory);
 
-        if (newCategoryName !== null && newCategoryColor !== null && dataIndex !== -1) {
+        if (newCategoryName !== null && newCategoryColor !== null && index !== -1) {
             // update the category with the new information
-            category.name = newCategoryName;
-            category.color = newCategoryColor;
+            currentCategory.name = newCategoryName;
+            currentCategory.color = newCategoryColor;
 
             // update the UI with the modified category information
-            const categoryItem = document.querySelector(`.myCategories[data-category="${dataIndex}"]`) as HTMLElement;
+            const categoryItem = document.querySelector(`.myCategories[data-category="${index}"]`) as HTMLElement;
             
             if (categoryItem) {
                 const categoryName = categoryItem.querySelector('span');
@@ -196,15 +200,22 @@ export const categories = (() => {
                 // update the screen
                 categoryItem.click();
             }
-            //saveCategoriesList();
+            saveCategoriesList();
         }
     }
     
     function retrieveCategoriesList(): void {
-        // Iterate through the categories list and create DOM elements to display them
-        categoriesList.forEach((currentCategory) => {
-            createCategory(currentCategory);
-        });
+        // retrieve the categories from localStorage
+        const storedCategories = localStorage.getItem('categoriesList');
+        if (storedCategories) {
+            const storedCategoriesParsed: Category[] = JSON.parse(storedCategories);
+            categoriesList = storedCategoriesParsed.map(categoryData => {
+                return new Category(categoryData.name, categoryData.color, categoryData.defaultCategory);
+            });
+            categoriesList.forEach((currentCategory) => {
+                createCategory(currentCategory);
+            });
+        }
     }
 
     function saveCategoriesList(): void {
