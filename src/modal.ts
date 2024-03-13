@@ -27,7 +27,6 @@ export const modal = (() => {
             const description = (classInfo as Task)?.description ?? '';
             const date = (classInfo as Task)?.date ?? '';
             const important = (classInfo as Task)?.important ?? '';
-            console.log(date)
             
             if (action === 'remove') {
                 return `
@@ -117,6 +116,7 @@ export const modal = (() => {
             event.preventDefault();
         
             if (action === 'remove') {
+                console.log(currentClass)
                 handleRemoveSubmission(currentClass!);
             } else {
                 // both task and category have a name
@@ -139,7 +139,7 @@ export const modal = (() => {
                     categories.editCategory(currentClass, nameInput.value, selectedColor!);
                     toggleModal();
                 } else if (action === 'add') {
-                    categories.createCategory(nameInput.value, selectedColor!);
+                    categories.addCategoryToList(nameInput.value, selectedColor!);
                     toggleModal();
                 }
             } else {
@@ -166,7 +166,7 @@ export const modal = (() => {
                 
                 console.log(dateValue)
 
-                tasks.createTask(nameInput.value, categoryIndex!, taskImportantInput.checked, dateValue, taskDescriptionInput.value);
+                tasks.addTaskToList(nameInput.value, categoryIndex!, taskImportantInput.checked, dateValue, taskDescriptionInput.value);
                 toggleModal();
             }
         }
@@ -192,7 +192,9 @@ export const modal = (() => {
     }
 
     function handleRemoveSubmission(currentClass: Category | Task) {
+        console.log(currentClass)
         if (currentClass instanceof Category) {
+            
             categories.removeCategory(currentClass);
         } else if (currentClass instanceof Task) {
             tasks.removeTask(currentClass);
