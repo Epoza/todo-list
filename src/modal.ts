@@ -116,7 +116,6 @@ export const modal = (() => {
             event.preventDefault();
         
             if (action === 'remove') {
-                console.log(currentClass)
                 handleRemoveSubmission(currentClass!);
             } else {
                 // both task and category have a name
@@ -192,9 +191,7 @@ export const modal = (() => {
     }
 
     function handleRemoveSubmission(currentClass: Category | Task) {
-        console.log(currentClass)
         if (currentClass instanceof Category) {
-            
             categories.removeCategory(currentClass);
         } else if (currentClass instanceof Task) {
             tasks.removeTask(currentClass);
