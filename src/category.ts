@@ -59,21 +59,16 @@ export const categories = (() => {
         categoryItem.setAttribute('data-category', categoryIndex.toString());
         
         // check for default category
-        if (currentCategory.defaultCategory && categoryIndex < defaultCategoryMappings.length) {
-            const { className, svg} = defaultCategoryMappings[categoryIndex];
-            
-            // insert the default category svg
-            categoryItem.classList.add('defaultCategory')
-            const categoryDefaultSvg = document.createElement('div');
-            categoryDefaultSvg.classList.add(className);
-            categoryDefaultSvg.innerHTML = svg;
-
-            categoryItem.appendChild(categoryDefaultSvg);
+        if (currentCategory.defaultCategory) {
+            insertDefaultCategorySvgs(categoryIndex, categoryItem);
 
             // set the first category to the selected category
-            if (categoryIndex === 0) {
-                categoryItem.classList.add('categorySelected');
+            const firstCategoryItem = document.querySelector('.myCategories[data-category="0"]') as HTMLElement;
+            if(firstCategoryItem){
+                firstCategoryItem.classList.add('categorySelected');
+                firstCategoryItem.click();
             }
+             
         }
 
         // display the category name
@@ -125,6 +120,27 @@ export const categories = (() => {
 
         updateCategories();
         //saveCategoriesList();
+    }
+
+    function insertDefaultCategorySvgs(categoryIndex: number, categoryItem: HTMLElement) {
+        // not done yet
+        if (categoryIndex < defaultCategoryMappings.length) {
+            const { className, svg} = defaultCategoryMappings[categoryIndex];
+            
+            // insert the default category svg
+            categoryItem.classList.add('defaultCategory')
+            const categoryDefaultSvg = document.createElement('div');
+            categoryDefaultSvg.classList.add(className);
+            categoryDefaultSvg.innerHTML = svg;
+    
+            categoryItem.appendChild(categoryDefaultSvg);
+    
+            // set the first category to the selected category
+            categoryItem.classList.add('categorySelected');
+            categoryItem.click();  
+        } else {
+            console.log("no defaultmapping 4 u");
+        }
     }
 
     function removeCategory(currentCategory: Category): void {
