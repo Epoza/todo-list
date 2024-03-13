@@ -25,17 +25,11 @@ export class Task {
 export const tasks = (() => {
     let tasksList: Task[] = [];
 
-    addTaskToList('First', '3', true, '02-20-2024', 'Hello There')
-    addTaskToList('Second', '3', false, '02-21-2024', 'Hello There')
-    addTaskToList('Third', '3', true, '02-22-2024', 'Hello There')
-    addTaskToList('yoyoyo', '4', false, '02-24-2024', 'Hello Thre')
-    addTaskToList('Four, fifthcat', '5', false, '02-22-2024', 'five')
-    addTaskToList('Fifth, fifthcat', '5', true, '02-24-2024', 'fivess')
-
     function addTaskToList(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
         const newTask = new Task(name, categoryIndex!, important, date, description);
         tasksList.push(newTask);
         createTask(newTask);
+        saveTasksList();
     }
     
     function createTask(currentTask: Task, defaultCategory?: string): void {
@@ -231,6 +225,7 @@ export const tasks = (() => {
         if (taskElement) {
             console.log('Task removed from that default category');
             taskElement.remove();
+            saveTasksList();
         } else {
             console.error('Could not find the task in that category');
         }
@@ -373,7 +368,8 @@ export const tasks = (() => {
                 }
             }
         });
-        updateTasks(currentTask.categoryIndex.toString())
+        updateTasks(currentTask.categoryIndex.toString());
+        saveTasksList();
     }
     
     function updateTasks(categoryIndex: string): void {
@@ -454,6 +450,7 @@ export const tasks = (() => {
     
             console.log(`Edited task with index ${taskIndex}`);
             console.log(tasksList);
+            saveTasksList();
         } else {
             console.error('Error: Task not found for editing.');
         }
@@ -474,7 +471,10 @@ export const tasks = (() => {
             taskContainer?.remove();
             // update the other tasks and associated categories
             updateTasksAfterCategoryRemoval(categoryIndex);
+        } else {
+            saveTasksList();
         }
+        
     }
 
     function updateTasksAfterCategoryRemoval(categoryIndex: string){
@@ -501,12 +501,42 @@ export const tasks = (() => {
             }
         });
         updateTasks(categoryIndex)
+        saveTasksList();
     }
 
 
     function checkCategoryForTasks(categoryIndex: string): boolean{
         console.log(tasksList.some(task => task.categoryIndex === categoryIndex))
         return tasksList.some(task => task.categoryIndex === categoryIndex);
+    }
+
+    function saveTasksList(){
+        localStorage.setItem('tasksList', JSON.stringify(tasksList));
+    }
+
+    function retrieveTasksList(){
+        // retrieve the tasks from localStorage
+        const storedTasks = localStorage.getItem('tasksList');
+        if (storedTasks) {
+            const storedTasksParsed: Task[] = JSON.parse(storedTasks);
+            tasksList = storedTasksParsed.map(taskData => {
+                return new Task(taskData.name, taskData.categoryIndex, taskData.important, taskData.date, taskData.description);
+            });
+            tasksList.forEach((currentTask) => {
+                createTask(currentTask);
+                // Update UI after creating each task
+                updateTasks(currentTask.categoryIndex);
+            });
+        }
+    }
+    
+
+    // Check if tasksList exists in localStorage and retrieve it
+    const storedTasks = localStorage.getItem('tasksList');
+    if (storedTasks) {
+        retrieveTasksList();        
+    } else {
+        console.log("no tasks to retrieve")
     }
 
     return {
