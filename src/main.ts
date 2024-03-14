@@ -132,6 +132,9 @@ categoryContainer?.addEventListener('click', (event: MouseEvent) => {
     // set the text content of taskCategoryHeader
     taskCategoryHeader!.textContent = categoryName || '';
 
+    // close the sidebar for small screens
+    toggleSidebar(window.innerWidth >= 768);
+    
     // test for click
     const categoryIndex = categoryElement.getAttribute('data-category');
     if(categoryIndex){
@@ -139,7 +142,6 @@ categoryContainer?.addEventListener('click', (event: MouseEvent) => {
       toggleAddTaskButton(categoryIndex)
       // checks to see what tasks to show based on category selected
       tasks.updateTasks(categoryIndex)
-      
     }
 
     
