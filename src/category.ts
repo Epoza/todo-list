@@ -16,13 +16,6 @@ export class Category {
 export const categories = (() => {
     let categoriesList: Category[] = [];
     
-    // easily insert default SVG's 
-    const defaultCategoryMappings = [
-        { className: 'svgAll', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-440 160-640v400h360v80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200L480-440Zm0-80 320-200H160l320 200ZM760-40l-56-56 63-64H600v-80h167l-64-64 57-56 160 160L760-40ZM160-640v440-240 3-283 80Z"/></svg>' },
-        { className: 'svgToday', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M360-300q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>'},
-        { className: 'svgImportant', svg: '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z"/></svg>' },
-    ];
-
     // Check if categoriesList exists in localStorage and retrieve it
     const storedCategories = localStorage.getItem('categoriesList');
     if (storedCategories) {
@@ -60,7 +53,25 @@ export const categories = (() => {
         
         // check for default category
         if (currentCategory.defaultCategory) {
-            insertDefaultCategorySvgs(categoryIndex, categoryItem);
+            let svg: string;
+            // Assign SVG based on category name
+            switch (currentCategory.name) {
+                case 'All':
+                    svg = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M480-440 160-640v400h360v80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h640q33 0 56.5 23.5T880-720v280h-80v-200L480-440Zm0-80 320-200H160l320 200ZM760-40l-56-56 63-64H600v-80h167l-64-64 57-56 160 160L760-40ZM160-640v440-240 3-283 80Z"/></svg>';
+                    break;
+                case 'Today':
+                    svg = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M360-300q-42 0-71-29t-29-71q0-42 29-71t71-29q42 0 71 29t29 71q0 42-29 71t-71 29ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z"/></svg>';
+                    break;
+                case 'Important':
+                    svg = '<svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m354-247 126-76 126 77-33-144 111-96-146-13-58-136-58 135-146 13 111 97-33 143ZM233-80l65-281L80-550l288-25 112-265 112 265 288 25-218 189 65 281-247-149L233-80Zm247-350Z"/></svg>';
+                    break;
+                default:
+                    svg = '<svg>Fallback SVG goes here</svg>';
+            }
+            // Append the SVG to the category item
+            categoryItem.innerHTML = svg;
+            // Set the class for styling
+            categoryItem.classList.add('defaultCategory');
 
             // set the first category to the selected category
             const firstCategoryItem = document.querySelector('.myCategories[data-category="0"]') as HTMLElement;
@@ -120,27 +131,6 @@ export const categories = (() => {
 
         updateCategories();
         //saveCategoriesList();
-    }
-
-    function insertDefaultCategorySvgs(categoryIndex: number, categoryItem: HTMLElement) {
-        // not done yet
-        if (categoryIndex < defaultCategoryMappings.length) {
-            const { className, svg} = defaultCategoryMappings[categoryIndex];
-            
-            // insert the default category svg
-            categoryItem.classList.add('defaultCategory')
-            const categoryDefaultSvg = document.createElement('div');
-            categoryDefaultSvg.classList.add(className);
-            categoryDefaultSvg.innerHTML = svg;
-    
-            categoryItem.appendChild(categoryDefaultSvg);
-    
-            // set the first category to the selected category
-            categoryItem.classList.add('categorySelected');
-            categoryItem.click();  
-        } else {
-            console.log("no defaultmapping 4 u");
-        }
     }
 
     function removeCategory(currentCategory: Category): void {
