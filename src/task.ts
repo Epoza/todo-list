@@ -83,6 +83,7 @@ export const tasks = (() => {
         // create new HTML structure for the task
         const taskItem = document.createElement('div');
         taskItem.classList.add("myTask");
+        taskItem.classList.add("toggleBorder", "toggleSubText")
         taskItem.setAttribute('data-task', taskIndex.toString());
         taskItem.setAttribute('assigned-category', defaultCategory ? defaultCategory: currentTask.categoryIndex);
 
@@ -319,7 +320,7 @@ export const tasks = (() => {
                     spanElement.style.textDecoration = currentTask.checked ? 'line-through' : 'currentColor'
                 });
                 // set the new taskIcon
-                (taskElement as HTMLElement).style.backgroundColor = currentTask.checked ? 'rgba(0, 0, 0, 0.3)' : '';
+                (taskElement as HTMLElement).style.backgroundColor = currentTask.checked ? '#7D7D7D' : '';
             } 
         });
         saveTasksList();
