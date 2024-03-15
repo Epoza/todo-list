@@ -5,18 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ToDo List</title>
   </head>
-  <body class="h-full m-0 p-0 font-NotoSans font-normal">
+  <body class="h-full m-0 p-0 font-NotoSans font-normal toggleBackground toggleIcon">
     <div class="flex" id="main">
       
-      <div class="p-5 w-72 border-r-2 shadow-lg toggleBorder toggleForeground" id="sidebar">
-        <div class="flex justify-between border-b-2 pb-2 toggleBorder" id="categories-header">
+      <div class="p-5 w-72 border-r-2 shadow-lg toggleForeground" id="sidebar">
+        <div class="flex justify-between border-b-2 pb-2" id="categories-header">
           <span class="large-text font-medium toggleMainText ">Categories</span>
           <div class="svgButton showModal" id="category"><svg xmlns="http://www.w3.org/2000/svg" height="31" viewBox="0 -960 960 960" width="31" alt="add box svg"><path class="toggleIcon" d="M440-280h80v-160h160v-80H520v-160h-80v160H280v80h160v160ZM200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h560q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560H200v560Zm0-560v560-560Z"/></svg></div>
         </div>
-        <div class="toggleSubText toggleBorder" id="categoryContainer"></div>
+        <div class="" id="categoryContainer"></div>
       </div>
 
-      <div class="relative h-screen w-screen " id="taskInfo">
+      <div class="relative h-screen w-screen" id="taskInfo">
         <div class="p-5 border-b-2 flex justify-between shadow-lg mb-8 toggleForeground" id="todoHeader">
           <button class="svgButton" id="toggleSidebarButton">
             <svg class="sidebarClose" xmlns="http://www.w3.org/2000/svg" height="31" viewBox="0 -960 960 960" width="31" alt="sidebar close svg"><path class="toggleIcon" d="M120-240v-80h520v80H120Zm664-40L584-480l200-200 56 56-144 144 144 144-56 56ZM120-440v-80h400v80H120Zm0-200v-80h520v80H120Z"/></svg>
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div class="hidden" id="modal-container">
+    <div class="hidden toggleForeground toggleMainText" id="modal-container">
     </div>
 
     <script type="module" src="/src/main.ts"></script>
