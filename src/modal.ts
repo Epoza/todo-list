@@ -33,7 +33,7 @@ export const modal = (() => {
                         <div id="modal-content">
                             <div id="modalHeader">
                                 <h2 class="large-text">${action === 'remove' ? 'Remove' : 'Edit'} ${capitalizedContentType}</h2>
-                                <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
+                                <div class="svgButton" id="close"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></div>
                             </div>
                             <form id="${contentType}Form">
                                 <div>${action === 'remove' ? `Remove this ${contentType}: "${name}"` : ''}</div>
@@ -47,21 +47,21 @@ export const modal = (() => {
                 }
 
                 return `
-                <div id="modal-content">
+                <div class="toggleBackground" id="modal-content">
                 <div id="modalHeader">
                     <h2 class="large-text">${action === 'add' ? 'Create New' : 'Edit'} ${capitalizedContentType}</h2>
-                    <div class="svgButton" id="close"><img src="../images/close.svg" alt="close modal icon"></div>
+                    <div class="svgButton" id="close"><svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z"/></svg></div>
                 </div>
                 <form id="${contentType}Form">
                     <label for="${contentType}Name">${capitalizedContentType} Name*</label>
-                    <input type="text" id="${contentType}Name" name="${contentType}Name" value="${name}" maxlength="30" required>
+                    <input type="text" class="toggleBackground toggleBorder" id="${contentType}Name" name="${contentType}Name" value="${name}" maxlength="30" required>
             
                     ${contentType === 'task' ? `
                         <label for="${contentType}Description">${capitalizedContentType} Description:</label>
-                        <textarea id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional">${description}</textarea>
+                        <textarea class="toggleBackground toggleBorder" id="${contentType}Description" name="${contentType}Description" rows="4" placeholder="Optional">${description}</textarea>
             
                         <label for="${contentType}Date">Due Date:</label>
-                        <input type="date" id="${contentType}Date" name="${contentType}Date" value="${convertDate(date, 'yyyy-mm-dd')}">
+                        <input class="toggleBackground toggleBorder" type="date" id="${contentType}Date" name="${contentType}Date" value="${convertDate(date, 'yyyy-mm-dd')}">
 
                         <div class="important-checkbox">
                             <label for="${contentType}Important">Important: </label>
