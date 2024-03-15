@@ -10,21 +10,25 @@ export default {
       fontFamily: {
         NotoSans: ["Noto Sans", "sans-serif"],
       },
-      light: {
-        // change these later
-        background: ' ',
-        foreground: ' ',
-        mainText: ' ',
-        subText: ' ',
-        border: ' ',
-      },
-      dark: {
-        // change these later
-        background: ' ',
-        foreground: ' ',
-        mainText: ' ',
-        subText: ' ',
-        border: ' ',
+      colors: {
+        light: {
+          // change these later
+          background: '#f2f9ff',
+          foreground: 'aliceblue',
+          mainText: '#00283d',
+          subText: '#204355',
+          border: 'black',
+          icon: 'black',
+        },
+        dark: {
+          // change these later
+          background: '#001A2C',
+          foreground: '#001523',
+          mainText: '#dbebfa',
+          subText: '#92c2f1',
+          border: '#dcedfe',
+          icon: '#92c2f1',
+        }
       }
     },
   },
