@@ -47,7 +47,7 @@ export const categories = (() => {
         // create new HTML structure
         const categoryIndex = categoriesList.length;
         const categoryItem = document.createElement('div');
-        categoryItem.classList.add("myCategories");
+        categoryItem.classList.add("myCategories", "toggleBorder");
         categoryItem.style.backgroundColor = `${currentCategory.color}`
         categoryItem.setAttribute('data-category', categoryIndex.toString());
         
@@ -84,6 +84,7 @@ export const categories = (() => {
 
         // display the category name
         const categoryName = document.createElement('span');
+        categoryName.classList.add('toggleSubText')
         categoryName.textContent = currentCategory.name;
         categoryItem.appendChild(categoryName);
 
