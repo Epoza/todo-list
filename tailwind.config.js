@@ -12,7 +12,6 @@ export default {
       },
       colors: {
         light: {
-          // change these later
           background: '#f4faff',
           foreground: '#f0f8ff',
           mainText: '#00283d',
@@ -21,7 +20,6 @@ export default {
           icon: 'black',
         },
         dark: {
-          // change these later
           background: '#001A2C',
           foreground: '#001523',
           mainText: '#dbebfa',

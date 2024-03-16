@@ -33,7 +33,7 @@ export const categories = (() => {
     }
 
     function addCategoryToList(name: string, color: string, defaultCategory = false): void {
-        // add the new category to the list
+        // Add the new category to the list
         const newCategory = new Category(name, color, defaultCategory);
         categoriesList.push(newCategory);
         createCategory(newCategory);
@@ -41,7 +41,6 @@ export const categories = (() => {
     }
 
     function createCategory(currentCategory: Category): void {
-        console.log(currentCategory)
         const categoryListContainer = document.getElementById('categoryContainer');
 
         // create new HTML structure
@@ -73,7 +72,7 @@ export const categories = (() => {
             // Set the class for styling
             categoryItem.classList.add('defaultCategory');
 
-            // set the first category to the selected category
+            // Set the first category to the selected category
             const firstCategoryItem = document.querySelector('.myCategories[data-category="0"]') as HTMLElement;
             if(firstCategoryItem){
                 firstCategoryItem.classList.add('categorySelected');
@@ -127,19 +126,13 @@ export const categories = (() => {
         }
 
         updateCategories();
-        //saveCategoriesList();
     }
 
     function removeCategory(currentCategory: Category): void {
         // Find the index of the current category in the categoriesList array
         const index = categoriesList.indexOf(currentCategory);
-        console.log(currentCategory)
-        console.log(categoriesList)
-        console.log(index)
 
         if (index !== -1) {
-            console.log('removed category index: ' + index);
-
             // Remove the corresponding element from the DOM
             const categoryElement = document.querySelector(`.myCategories[data-category="${index}"]`);
             categoryElement?.remove();
@@ -149,14 +142,13 @@ export const categories = (() => {
 
             if (tasks.checkCategoryForTasks(index.toString()) === true) {
                 // Remove all tasks associated with the category
-                console.log(index.toString())
                 tasks.removeAllTasks(index.toString(), true);
             } else {
-                // update the other tasks and associated categories
+                // Update the other tasks and associated categories
                 tasks.updateTasksAfterCategoryRemoval(index.toString())
             }
             
-            //Select the first category after removal
+            // Select the first category after removal
             const firstCategoryElement = document.querySelector('.myCategories[data-category="0"]') as HTMLElement;
             if (firstCategoryElement) {
                 firstCategoryElement.click();
@@ -165,7 +157,29 @@ export const categories = (() => {
             updateCategories();
             saveCategoriesList();
         }
-        console.log(categoriesList)
+    }
+
+    function editCategory(currentCategory: Category, newCategoryName: string, newCategoryColor: string): void {
+        // Find the categoryItem using the unique identifier (data-category)
+        const index = categoriesList.indexOf(currentCategory);
+
+        if (newCategoryName !== null && newCategoryColor !== null && index !== -1) {
+            // Update the category with the new information
+            currentCategory.name = newCategoryName;
+            currentCategory.color = newCategoryColor;
+
+            // Update the UI with the modified category information
+            const categoryItem = document.querySelector(`.myCategories[data-category="${index}"]`) as HTMLElement;
+            
+            if (categoryItem) {
+                const categoryName = categoryItem.querySelector('span');
+                categoryName!.textContent = newCategoryName;
+                categoryItem.style.backgroundColor = newCategoryColor;
+                // Update the screen
+                categoryItem.click();
+            }
+            saveCategoriesList();
+        }
     }
 
     function updateCategories(): void {
@@ -174,7 +188,7 @@ export const categories = (() => {
         categoryElements.forEach((categoryElement, newIndex) => {
             categoryElement.setAttribute('data-category', newIndex.toString());
 
-            // update data-remove attribute of the remove button
+            // Update data-remove attribute of the remove button
             const removeButton = categoryElement.querySelector('.svgButton[data-remove]');
             if (removeButton) {
                 removeButton.setAttribute('data-remove', newIndex.toString());
@@ -182,33 +196,13 @@ export const categories = (() => {
         });
     }
 
-    function editCategory(currentCategory: Category, newCategoryName: string, newCategoryColor: string): void {
-        console.log(categoriesList)
-
-        // find the categoryItem using the unique identifier (data-category)
-        const index = categoriesList.indexOf(currentCategory);
-
-        if (newCategoryName !== null && newCategoryColor !== null && index !== -1) {
-            // update the category with the new information
-            currentCategory.name = newCategoryName;
-            currentCategory.color = newCategoryColor;
-
-            // update the UI with the modified category information
-            const categoryItem = document.querySelector(`.myCategories[data-category="${index}"]`) as HTMLElement;
-            
-            if (categoryItem) {
-                const categoryName = categoryItem.querySelector('span');
-                categoryName!.textContent = newCategoryName;
-                categoryItem.style.backgroundColor = newCategoryColor;
-                // update the screen
-                categoryItem.click();
-            }
-            saveCategoriesList();
-        }
+    function saveCategoriesList(): void {
+        // Save the category changes to localStorage
+        localStorage.setItem('categoriesList', JSON.stringify(categoriesList));
     }
     
     function retrieveCategoriesList(): void {
-        // retrieve the categories from localStorage
+        // Retrieve the categories from localStorage
         const storedCategories = localStorage.getItem('categoriesList');
         if (storedCategories) {
             const storedCategoriesParsed: Category[] = JSON.parse(storedCategories);
@@ -221,15 +215,9 @@ export const categories = (() => {
         }
     }
 
-    function saveCategoriesList(): void {
-        localStorage.setItem('categoriesList', JSON.stringify(categoriesList));
-    }
-
     return {
         addCategoryToList,
-        createCategory,
         removeCategory,
-        updateCategories,
         editCategory,
     };
 })();

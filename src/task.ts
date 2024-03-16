@@ -42,6 +42,7 @@ export const tasks = (() => {
     const mainCategorySvg = '<svg class="taskButtonClick" xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24"><path d="M240-200h133.847v-237.692h212.306V-200H720v-360L480-740.769 240-560v360Zm-59.999 59.999v-449.998L480-815.767l299.999 225.768v449.998H526.154v-237.693h-92.308v237.693H180.001ZM480-470.385Z"/></svg>'
 
     function addTaskToList(name: string, categoryIndex: string, important: boolean, date?: string, description?: string): void {
+        // Add the new task to the list
         const newTask = new Task(name, categoryIndex!, false, important, date, description);
         tasksList.push(newTask);
         createTask(newTask);
@@ -49,19 +50,14 @@ export const tasks = (() => {
     }
     
     function createTask(currentTask: Task, defaultCategory?: string): void {
-        
         const taskIndex = tasksList.indexOf(currentTask);
-        // use for taskContainer placement
-        const taskInfo = document.getElementById('taskInfo');
-        console.log(taskInfo)
 
-        // create or retrieve the task container for the selected category
+        // Create or retrieve the task container for the selected category
         const taskContainerId = `taskContainer-${defaultCategory ? defaultCategory: currentTask.categoryIndex}`;
         let taskContainer = document.getElementById(taskContainerId);
 
         if (!taskContainer) {
-            console.log(`creating new task container for category index ${defaultCategory ? defaultCategory: currentTask.categoryIndex}`)
-            // create new task container only if it doesn't exist
+            // Create new task container only if it doesn't exist
             taskContainer = document.createElement('div');
             taskContainer.id = taskContainerId;
             taskContainer.classList.add('taskContainer')
@@ -76,11 +72,8 @@ export const tasks = (() => {
                     handleButtonClick(event);
                 }
             });
-        } else {
-            console.log(`Using existing task container for category index ${defaultCategory ? defaultCategory: currentTask.categoryIndex}`);
         }
-        console.log(taskIndex)
-        // create new HTML structure for the task
+        // Create new HTML structure for the task
         const taskItem = document.createElement('div');
         taskItem.classList.add("myTask");
         taskItem.classList.add("toggleBorder", "toggleSubText")
@@ -90,19 +83,18 @@ export const tasks = (() => {
         const taskContent = document.createElement('div');
         taskContent.id = 'taskContent'
 
-        // add class for important tasks
+        // Add class for important tasks
         taskItem.classList.add(currentTask.important ? 'important-task' : 'normal-task');
 
-        // html structure for checkbox
-        // changed to check task when user clicks
+        // HTML structure for checkbox
+        // Changed to check task when user clicks
         const uncheckedTask = document.createElement('div');
         uncheckedTask.classList.add('svgButton', 'taskButton');
         uncheckedTask.id = 'checkButton';
-        console.log(currentTask.checked)
         uncheckedTask.innerHTML = currentTask.checked ? checkedBoxSvg : uncheckedBoxSvg;
         taskContent.appendChild(uncheckedTask);
 
-        // button svg holder
+        // Button SVG holder
         const taskSvgButtonContainer = document.createElement('div');
         taskSvgButtonContainer.classList.add('svgButtonContainer');
 
@@ -121,42 +113,37 @@ export const tasks = (() => {
             taskEdit.innerHTML = editSvg;
             taskSvgButtonContainer.appendChild(taskEdit);
 
-            // delete button
+            // Delete button
             const taskRemove = document.createElement('div');
             taskRemove.classList.add('svgButton', 'taskButton');
             taskRemove.id = 'removeButton';
-            // possibly change to just data-remove
-            taskRemove.setAttribute('data-remove-task', taskIndex.toString());
             taskRemove.innerHTML = removeSvg;
             taskSvgButtonContainer.appendChild(taskRemove);
         } else {
-            // goes to category of main task
+            // Button goes to category of the main task
             const mainCategoryButton = document.createElement('div');
             mainCategoryButton.classList.add('svgButton', 'taskButton');
             mainCategoryButton.id = 'mainCategoryButton';
             mainCategoryButton.innerHTML = mainCategorySvg;
             taskSvgButtonContainer.appendChild(mainCategoryButton)
         }
-        
-
-        // display the task name
+        // Display the task name
         const taskName = document.createElement('span');
         taskName.classList.add('nameText');
         taskName.textContent = currentTask.name;
         taskContent.appendChild(taskName);
 
-        // display the selected date
+        // Display the selected date
         const taskDate = document.createElement('span');
         taskDate.classList.add('dateText');
         taskDate.textContent = currentTask.date ?? '';
         taskContent.appendChild(taskDate);
 
-        // append button container to task
+        // Append button container to task
         taskContent.appendChild(taskSvgButtonContainer);
-
         taskItem.appendChild(taskContent);
 
-        // description dropdown & text
+        // Description dropdown & text
         const descriptionDropdown = document.createElement('div');
         descriptionDropdown.classList.add('descriptionDropdown');
         descriptionDropdown.style.display = 'none'; // Initially hide the dropdown
@@ -167,21 +154,19 @@ export const tasks = (() => {
         descriptionDropdown.appendChild(descriptionContent);
         taskItem.appendChild(descriptionDropdown);
 
-        // append
+        // Append
         taskContainer.appendChild(taskItem);
         
-        // add the tasks to default categories if applicable
+        // Add the tasks to default categories if applicable
         if (parseInt(defaultCategory ? defaultCategory : currentTask.categoryIndex, 10) > 2) {
             addTaskToDefaultCategory(currentTask)
         } 
-        // update tasks
+        // Update tasks
         updateTasks(defaultCategory ? defaultCategory: currentTask.categoryIndex);
     }
 
     function addTaskToDefaultCategory(currentTask: Task, edit?: boolean) {
-        console.log(currentTask);
-    
-        // Remove tasks from the specified category based on assigned-category
+        // Remove tasks from the specified category based on assigned-category when editing
         if (edit) {
             if (currentTask.date !== getCurrentDate() && currentTask.taskInCategory1) {
                 removeTaskFromDefaultCategory(currentTask, '1');
@@ -192,7 +177,6 @@ export const tasks = (() => {
                 currentTask.taskInCategory2 = false;
             }
         }
-    
         // Add task to default category if it meets criteria
         if (currentTask && currentTask.categoryIndex !== '0' && !currentTask.taskInCategory0) {
             createTask(currentTask, '0');
@@ -210,15 +194,10 @@ export const tasks = (() => {
     }
 
     function removeTaskFromDefaultCategory(currentTask: Task, categoryIndex: string): void {
-        console.log(categoryIndex);
         // Remove the task from the specified category based on the task's properties
         const categoryContainer = document.getElementById(`taskContainer-${categoryIndex}`);
-        console.log(categoryContainer)
         const taskElement = categoryContainer?.querySelector(`.myTask[data-task="${tasksList.indexOf(currentTask)}"]`);
-        console.log(tasksList.indexOf(currentTask))
-        console.log(taskElement)
         if (taskElement) {
-            console.log('Task removed from that default category');
             taskElement.remove();
             saveTasksList();
         } else {
@@ -227,6 +206,7 @@ export const tasks = (() => {
     }
 
     function getCurrentDate(){
+        // Check if the task belongs in the 'Today' category
         const today = new Date();
         const dd = String(today.getDate()).padStart(2, '0');
         const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -239,12 +219,11 @@ export const tasks = (() => {
         const target = event.target as HTMLElement;
         const button = target.closest('.svgButton');
 
-        // get the current task
+        // Get the current task
         const taskElement = button!.closest('.myTask') as HTMLElement;
         const dataIndex = taskElement.getAttribute('data-task');
         const taskIndex = parseInt(dataIndex!, 10);
         const currentTask = tasksList[taskIndex];
-        console.log(currentTask)
                     
         enum ButtonId {
             checkButton = 'checkButton',
@@ -259,8 +238,6 @@ export const tasks = (() => {
 
             switch (buttonId) {
                 case ButtonId.checkButton:
-                    const checkTaskIcon = button.querySelector('svg') as SVGElement;
-                    console.log(checkTaskIcon)
                     changeCheckedState(currentTask, true);
                     break;
                 case ButtonId.DescriptionButton:
@@ -273,7 +250,6 @@ export const tasks = (() => {
                     break;
                 case ButtonId.mainCategoryButton:
                     // Go to the categoryIndex of the task
-                    console.log('clicked maincategory button')
                     const firstCategoryElement = document.querySelector(`.myCategories[data-category="${currentTask.categoryIndex}"]`) as HTMLElement;
                     if (firstCategoryElement) {
                         firstCategoryElement.click();
@@ -281,7 +257,7 @@ export const tasks = (() => {
                     }
                     break;
                 case ButtonId.EditButton:
-                    // go to editTask
+                    // Go to editTask
                     modal.task('edit', currentTask);
                     break;
                 case ButtonId.RemoveButton:
@@ -292,122 +268,7 @@ export const tasks = (() => {
             }
         }
     }
-
-    function changeCheckedState(currentTask: Task, clicked = false){
-        // If clicked then toggle
-        if(clicked){
-            currentTask.checked = !currentTask.checked;  
-            const isChecked = currentTask.checked;
-            // Toggle the SVG for all tasks with the same data-task
-            const taskIndex = tasksList.indexOf(currentTask);
-            const tasksWithSameIndex = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
-            tasksWithSameIndex.forEach(taskElement => {
-                const taskIcon = taskElement.querySelector('svg') as SVGElement;
-                if (taskIcon) {
-                    const toggleIcon = isChecked ? checkedBoxSvg : uncheckedBoxSvg;
-                    taskIcon.outerHTML = toggleIcon;
-                }
-            });      
-            
-        }
-        // change the styling depending on if checked or not
-        const taskIndex = tasksList.indexOf(currentTask);
-        const tasksWithSameIndex = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
-        tasksWithSameIndex.forEach(taskElement => {
-            const taskText = taskElement?.querySelectorAll('span');
-            if (taskText) {
-                taskText.forEach(spanElement => {
-                    spanElement.style.textDecoration = currentTask.checked ? 'line-through' : 'currentColor'
-                });
-                // set the new taskIcon
-                (taskElement as HTMLElement).style.backgroundColor = currentTask.checked ? '#7D7D7D' : '';
-            } 
-        });
-        saveTasksList();
-    }
-
-    function removeTask(currentTask: Task): void {
-        const taskIndex = tasksList.indexOf(currentTask);
-
-        // Remove the task from the tasksList array only once
-        tasksList.splice(taskIndex, 1);
-   
-        // Find all tasks with the same data-task attribute value
-        const tasksToRemove = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
-        tasksToRemove.forEach(taskElement => {
-            // Get the task index from the data-task attribute
-            const dataIndex = taskElement.getAttribute('data-task');
-            const taskIndexToRemove = parseInt(dataIndex!, 10);
     
-            // remove each task with the same data-task from the screen
-            taskElement.remove();
-    
-            console.log(`Removed task with index ${taskIndexToRemove}`);
-        });
-        console.log(tasksList);
-    
-        // Update data values when removing items
-        const taskElements = document.querySelectorAll('.myTask');
-        taskElements.forEach(taskElement => {
-            const dataIndex = taskElement.getAttribute('data-task');
-            const currentIndex = parseInt(dataIndex!, 10);
-
-            // Shift down the tasks with a higher index than the removed task
-            if (currentIndex > taskIndex) {
-                const newIndex = currentIndex - 1;
-                taskElement.setAttribute('data-task', newIndex.toString());
-
-                // Update data-remove attribute of the remove button
-                // possibly remove this code below in the future
-                const removeButton = taskElement.querySelector('.svgButton[data-remove-task]');
-                if (removeButton) {
-                    removeButton.setAttribute('data-remove-task', newIndex.toString());
-                }
-            }
-        });
-        updateTasks(currentTask.categoryIndex.toString());
-        saveTasksList();
-    }
-    
-    function updateTasks(categoryIndex: string): void {
-        console.log('update tasks category index' + categoryIndex)
-        // Checks to see what tasks to show based on category selected
-        const allTaskContainers = document.querySelectorAll('.taskContainer');
-        
-        allTaskContainers.forEach((container) => {
-            const isVisible = container.id === `taskContainer-${categoryIndex}`;
-            const containerElement = container as HTMLElement;
-            containerElement.style.display = isVisible ? 'block' : 'none';
-            
-            // Check if the container has child tasks
-        const hasChildTasks = containerElement.querySelector('.myTask') !== null;
-
-        // Remove the task container only if it has no child tasks
-        if (!hasChildTasks) {
-            containerElement.remove();
-            console.log(`Removed empty task container ${containerElement.id}`);
-        }
-        });
-
-        // Change the add task button styling
-        let taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
-
-        // hide/show task message when there are no tasks
-        const addTaskMessage = document.getElementById('addTaskMessage'); 
-        // Check if tasks exist
-        if (tasksList.length > 0 && taskContainer) {
-            // Tasks exist, show tasks
-            if (addTaskMessage) {
-                addTaskMessage.style.display = "none";
-            }
-        } else {
-            // No tasks, show a message
-            if (addTaskMessage) {
-                addTaskMessage.style.display = "block";
-            }
-        }
-    }
-
     function editTask(currentTask: Task, newName: string, newImportant: boolean, newDate?: string, newDescription?: string): void {
         const taskIndex = tasksList.indexOf(currentTask);
     
@@ -426,7 +287,7 @@ export const tasks = (() => {
                 if (taskNameElement) {
                     taskNameElement.textContent = newName;
                 }
-    
+
                 // Update the task importance
                 taskElement.classList.remove('important-task', 'normal-task');
                 taskElement.classList.add(newImportant ? 'important-task' : 'normal-task');
@@ -444,13 +305,38 @@ export const tasks = (() => {
                 }
             });
             addTaskToDefaultCategory(currentTask, true);
-    
-            console.log(`Edited task with index ${taskIndex}`);
-            console.log(tasksList);
             saveTasksList();
         } else {
             console.error('Error: Task not found for editing.');
         }
+    }
+
+    function removeTask(currentTask: Task): void {
+        const taskIndex = tasksList.indexOf(currentTask);
+
+        // Remove the task from the tasksList array only once
+        tasksList.splice(taskIndex, 1);
+   
+        // Find all tasks with the same data-task attribute value
+        const tasksToRemove = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
+        tasksToRemove.forEach(taskElement => {
+            // remove each task with the same data-task from the screen
+            taskElement.remove();
+        });
+        // Update data values when removing items
+        const taskElements = document.querySelectorAll('.myTask');
+        taskElements.forEach(taskElement => {
+            const dataIndex = taskElement.getAttribute('data-task');
+            const currentIndex = parseInt(dataIndex!, 10);
+
+            // Shift down the tasks with a higher index than the removed task
+            if (currentIndex > taskIndex) {
+                const newIndex = currentIndex - 1;
+                taskElement.setAttribute('data-task', newIndex.toString());
+            }
+        });
+        updateTasks(currentTask.categoryIndex.toString());
+        saveTasksList();
     }
 
     function removeAllTasks(categoryIndex: string, categoryRemoved: boolean) {
@@ -501,9 +387,77 @@ export const tasks = (() => {
         saveTasksList();
     }
 
+    // Function for toggling check box state of task
+    function changeCheckedState(currentTask: Task, clicked = false){
+        // If clicked then toggle
+        if(clicked){
+            currentTask.checked = !currentTask.checked;  
+            const isChecked = currentTask.checked;
+            // Toggle the SVG for all tasks with the same data-task
+            const taskIndex = tasksList.indexOf(currentTask);
+            const tasksWithSameIndex = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
+            tasksWithSameIndex.forEach(taskElement => {
+                const taskIcon = taskElement.querySelector('svg') as SVGElement;
+                if (taskIcon) {
+                    const toggleIcon = isChecked ? checkedBoxSvg : uncheckedBoxSvg;
+                    taskIcon.outerHTML = toggleIcon;
+                }
+            });      
+        }
+        // change the styling depending on if checked or not
+        const taskIndex = tasksList.indexOf(currentTask);
+        const tasksWithSameIndex = document.querySelectorAll(`.myTask[data-task="${taskIndex}"]`);
+        tasksWithSameIndex.forEach(taskElement => {
+            const taskText = taskElement?.querySelectorAll('span');
+            if (taskText) {
+                taskText.forEach(spanElement => {
+                    spanElement.style.textDecoration = currentTask.checked ? 'line-through' : 'currentColor'
+                });
+                // set the new taskIcon
+                (taskElement as HTMLElement).style.backgroundColor = currentTask.checked ? '#7D7D7D' : '';
+            } 
+        });
+        saveTasksList();
+    }
+
+    function updateTasks(categoryIndex: string): void {
+        // Checks to see what tasks to show based on category selected
+        const allTaskContainers = document.querySelectorAll('.taskContainer');
+        
+        allTaskContainers.forEach((container) => {
+            const isVisible = container.id === `taskContainer-${categoryIndex}`;
+            const containerElement = container as HTMLElement;
+            containerElement.style.display = isVisible ? 'block' : 'none';
+            
+            // Check if the container has child tasks
+            const hasChildTasks = containerElement.querySelector('.myTask') !== null;
+
+            // Remove the task container only if it has no child tasks
+            if (!hasChildTasks) {
+                containerElement.remove();
+            }
+        });
+
+        // Change the add task button styling
+        let taskContainer = document.getElementById(`taskContainer-${categoryIndex}`);
+
+        // Hide/show task message when there are no tasks
+        const addTaskMessage = document.getElementById('addTaskMessage'); 
+        // Check if tasks exist
+        if (tasksList.length > 0 && taskContainer) {
+            // Tasks exist, show tasks
+            if (addTaskMessage) {
+                addTaskMessage.style.display = "none";
+            }
+        } else {
+            // No tasks, show a message
+            if (addTaskMessage) {
+                addTaskMessage.style.display = "block";
+            }
+        }
+    }
 
     function checkCategoryForTasks(categoryIndex: string): boolean{
-        console.log(tasksList.some(task => task.categoryIndex === categoryIndex))
         return tasksList.some(task => task.categoryIndex === categoryIndex);
     }
 
@@ -512,7 +466,7 @@ export const tasks = (() => {
     }
 
     function retrieveTasksList(){
-        // retrieve the tasks from localStorage
+        // Retrieve the tasks from localStorage
         const storedTasks = localStorage.getItem('tasksList');
         if (storedTasks) {
             const storedTasksParsed: Task[] = JSON.parse(storedTasks);
@@ -536,13 +490,11 @@ export const tasks = (() => {
     if (storedTasks) {
         retrieveTasksList();        
     } else {
-        console.log("no tasks to retrieve")
+        console.info("no tasks to retrieve")
     }
 
     return {
         addTaskToList,
-        createTask,
-        handleButtonClick,
         removeAllTasks,
         removeTask,
         updateTasks,

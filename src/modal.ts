@@ -10,13 +10,13 @@ export const modal = (() => {
         const modalContent = getModalContent(action, contentType, capitalizedContentType, currentClass);
         getModal!.innerHTML = modalContent;
 
-        // event listener for form submission
+        // Event listener for form submission
         const formSubmission = document.getElementById(`${contentType}Form`) as HTMLFormElement;
         formSubmission.addEventListener('submit', handleFormSubmission);
 
         toggleModal();
 
-        // event listeners for cancel and close buttons
+        // Event listeners for cancel and close buttons
         document.getElementById('cancel')!.addEventListener('click', handleCancel);
         document.getElementById('close')!.addEventListener('click', handleCancel);
 
@@ -92,7 +92,7 @@ export const modal = (() => {
             `).join('');
         }
 
-        // possibly move to main
+        // Possibly move to main
         function convertDate(inputDate: string, toFormat = 'mm-dd-yyyy') {
             if (inputDate) {
                 // Split the input date into components
@@ -118,7 +118,7 @@ export const modal = (() => {
             if (action === 'remove') {
                 handleRemoveSubmission(currentClass!);
             } else {
-                // both task and category have a name
+                // Both task and category have a name
                 const nameInput = document.getElementById(`${contentType}Name`) as HTMLInputElement;
                 if (contentType === 'category') {
                     handleCategoryAction(nameInput);
@@ -147,24 +147,19 @@ export const modal = (() => {
         }
         
         function handleTaskAction(nameInput: HTMLInputElement) {
-            // possibly change to let
             const taskDescriptionInput = document.getElementById(`${contentType}Description`) as HTMLInputElement;
             const taskImportantInput = document.getElementById(`${contentType}Important`) as HTMLInputElement;
             const taskDateInput = document.getElementById(`${contentType}Date`) as HTMLInputElement;
-            // change the date from yyyy-mm-dd to mm-dd-yyyy
+            // Change the date from yyyy-mm-dd to mm-dd-yyyy
             const dateValue = convertDate(taskDateInput.value);
 
             if(action === 'edit' && currentClass instanceof Task){
-                console.log('task edit')
                 tasks.editTask(currentClass, nameInput.value, taskImportantInput.checked, dateValue, taskDescriptionInput.value)
                 toggleModal();
             } else if (action === 'add') {
                 const selectedCategory = document.querySelector('.myCategories.categorySelected');
                 const categoryIndex = selectedCategory!.getAttribute('data-category');
-                // if no date is given, show no date
-                
-                console.log(dateValue)
-
+                // If no date is given, show no date
                 tasks.addTaskToList(nameInput.value, categoryIndex!, taskImportantInput.checked, dateValue, taskDescriptionInput.value);
                 toggleModal();
             }
@@ -181,7 +176,7 @@ export const modal = (() => {
             });
         }
 
-        // add event listener
+        // Add event listener
         if (getModal && contentType === 'category') {
             const modalStyle = window.getComputedStyle(getModal);
             if (modalStyle.display === 'flex') {
