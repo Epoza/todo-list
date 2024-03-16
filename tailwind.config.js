@@ -13,10 +13,10 @@ export default {
       colors: {
         light: {
           // change these later
-          background: '#f2f9ff',
-          foreground: 'aliceblue',
+          background: '#f4faff',
+          foreground: '#f0f8ff',
           mainText: '#00283d',
-          subText: '#204355',
+          subText: '#343434',
           border: 'black',
           icon: 'black',
         },
